@@ -1,4 +1,187 @@
 @startuml conception
 
 
+class Portfolio {
+    
+    + MonteCarlo monteCarlo
+    + ITimeGrid rebalancingTimeGrid
+    + vector<Position> positions
+}
+
+
+
+
+class MonteCarlo {
+
+    + Option *option
+    + GlobalModel model
+    + int SampleNb
+    + double RelativeFiniteDifferenceStep
+    + priceAndDelta()
+}
+
+
+class Position {
+    + int date
+    + PnlVect *deltas
+    + PnlVect *deltasStdDev
+    + double price
+    + double priceStdDev
+    + double portfolioValue
+}
+
+
+class Option {
+
+    + int[] assetCurrencyMapping
+    + vector<InterestRateModel> foreignInterestRates
+    + InterestRateModel domesticInterestRate
+    + ITimeGrid monitoringTimeGrid
+    + virtual payoff() : doubl
+
+}
+
+
+class CallQuantoOption {
+    + strike K 
+    + payoff() : doubl
+}
+
+
+class CallCurrencyOption {
+    + strike K 
+    + payoff() : doubl
+
+}
+
+class QuantoExchangeOption {
+    + strike K 
+    + payoff() : doubl
+
+}
+
+
+class ForeignAsianOption {
+    + payoff() : doubl
+
+}
+
+class ForeignPerfBasketOption {
+    + strike K 
+    + payoff() : doubl
+
+}
+
+
+
+class GlobalModel {
+
+    + vector<RiskyAssets> assets
+    + vector<Currency> currencies
+    + ITimeGrid monitoringTimeGrid
+    + InterestRateModel domesticInterestRate
+    + pnl_mat* Correlations
+}
+
+class InterestRateModel {
+
+    + double rate 
+    + string id 
+    + discount(double t1, double t2) : double
+    + account(double t1, double t2) : doubl
+
+}
+
+
+
+
+class RiskyDynamics {
+
+    + double drift
+    + PnlVect *volatilityVector
+    + sampleNextDate()
+}
+
+class RiskyAsset {
+
+    + InterestRateModel domesticInterestRate
+}
+
+class Currency {
+
+    + InterestRateModel domesticInterestRate
+    + InterestRateModel foreignInterestRate
+}
+
+
+
+
+
+
+
+class ITimeGrid {
+    + ITimeGrid createTimeGridFromJson()
+    + at(int index) : int
+    + len() : int
+    + has(int nDays) : bool
+
+}
+
+
+class GridTimeGrid {
+    + int[] DatesInDays
+}
+
+class FixedTimeGrid {
+    + int periode 
+    + int count 
+}
+
+
+abstract class  RebalacingOracle  {
+    + bool IsRebalancing(DateTime date)
+}
+
+class FixedRebalacing {
+    - int Count 
+    - int Periode 
+    + override bool IsRebalancing(DateTime date)
+}
+
+class GridRebalacing {
+    + int DatesInDays
+    + override bool IsRebalancing(DateTime date)
+}
+
+
+
+Portfolio o-- MonteCarlo
+Portfolio o-- Position 
+Portfolio o-- RebalacingOracle
+
+MonteCarlo o-- Option 
+MonteCarlo o-- GlobalModel
+
+Option <-- CallQuantoOption
+Option <-- CallCurrencyOption
+Option <-- QuantoExchangeOption
+Option <-- ForeignAsianOption
+Option <-- ForeignPerfBasketOption
+Option -- ITimeGrid
+
+RebalacingOracle <|-- FixedRebalacing
+RebalacingOracle <|-- GridRebalacing
+
+
+ITimeGrid <|-- GridTimeGrid 
+ITimeGrid <|-- FixedTimeGrid 
+
+
+GlobalModel <|-- InterestRateModel
+GlobalModel -- ITimeGrid
+GlobalModel <|-- RiskyDynamics
+RiskyDynamics <|-- RiskyAsset
+RiskyDynamics <|-- Currency
+
+
 @enduml

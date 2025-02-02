@@ -24,6 +24,7 @@ void Position::print() const {
 Portfolio::Portfolio(nlohmann::json &jsonParams, MonteCarlo &monteCarlo)
     : monteCarlo(monteCarlo) {
 
+
 }
 
 Portfolio::~Portfolio() {
