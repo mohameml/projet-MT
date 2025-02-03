@@ -5,13 +5,12 @@
 #include "pnl/pnl_vector.h"
 #include "pnl/pnl_matrix.h"
 #include "json_reader.hpp"
+#include "InterestRateModel.hpp"
 
 class Option
 {
 public:
-    double maturity; /// maturité
-    double dates;    /// nombre de dates d'exercice
-    double size;     /// dimension du modèle, redondant avec BlackScholesModel::size
+    int* assetCurrencyMapping; 
 
 public:
     Option();
