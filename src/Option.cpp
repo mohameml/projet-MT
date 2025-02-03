@@ -17,8 +17,6 @@ Option::Option()
 Option::Option(const nlohmann::json json)
 {
 
-
-
     int numberOfDaysPerYear = json.at("NumberOfDaysInOneYear").get<int>();
 
     maturity = json.at("Option").at("MaturityInDays").get<int>() / double (numberOfDaysPerYear);
@@ -45,8 +43,8 @@ Option::Option(const nlohmann::json json)
     
 
     auto assets = json.at("Assets");
-    int lenght = assets.size();
-    this->assetCurrencyMapping = new int[lenght];
+    int lenght = jsonCurrencies.size();
+    this->assetCurrencyMapping.resize(lenght);
     std::map<std::string , int> dit_curr_nb;
 
     for(auto asset : assets) {
@@ -65,7 +63,6 @@ Option::Option(const nlohmann::json json)
 
 Option::~Option()
 {
-
 }
 
 Option *instance_option(const nlohmann::json json)

@@ -3,26 +3,21 @@
 #include <list>
 #include "MonteCarlo.hpp"
 #include "TimeGrid.hpp"
-
-class Position {
-public:
-    int date;
-    PnlVect *deltas;
-    PnlVect *deltasStdDev;
-    double price;
-    double priceStdDev;
-    double portfolioValue;
-
-    Position(int date, double price, double priceStdDev, PnlVect* deltas, PnlVect* deltasStdDev, double portfolioValue);
-    friend void to_json(nlohmann::json &j, const Position &positions);
-    void print() const;
-};
+#include "RebalacingOracle.cpp"
+#include "Position.hpp"
 
 class Portfolio {
 public:
     MonteCarlo &monteCarlo;
     std::list<Position> positions;
+    double cash ;
+    RebalancingOracle rebalacingOrcale;
 
+    Portfolio();
     Portfolio(nlohmann::json &jsonParams, MonteCarlo &monteCarlo);
     ~Portfolio();
+    void UpdatePortfolio();
+    void GetPortfolioValue(int t1 , int t2 , double cash);
+    void ComputeValueOfRiskyAssets();
+
 };

@@ -15,6 +15,7 @@ MonteCarlo::MonteCarlo(const nlohmann::json json)
 
     model_size = model->assets.size() + model->currencies.size();
 
+    nbDays = json.at("Option").at("MaturityInDays").get<int>();
 
     rng = pnl_rng_create(PNL_RNG_MERSENNE);
     pnl_rng_sseed(rng, time(NULL));

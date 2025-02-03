@@ -17,6 +17,7 @@ public:
     double fd_step;           /// pas de méthode de différance fini
     PnlRng *rng;    
     int model_size ; /// size of the model 
+    int nbDays ;
 
 public : 
     MonteCarlo();

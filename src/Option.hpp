@@ -10,10 +10,12 @@
 #include "TimeGrid.hpp"
 
 
+
+
 class Option
 {
 public:
-    int* assetCurrencyMapping; 
+    std::vector<int> assetCurrencyMapping; 
     std::vector<InterestRateModel> foreignInterestRates;
     InterestRateModel domesticInterestRate;
     TimeGrid monitoringTimeGrid;
