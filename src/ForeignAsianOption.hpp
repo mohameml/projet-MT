@@ -7,9 +7,7 @@ class ForeignAsianOption : public Option
 {
 
 public:
-    double strike;
-    PnlVect *payoff_coeffcients;
-    PnlVect *vect_ones;
+
     ForeignAsianOption();
     ForeignAsianOption(const nlohmann::json json);
     ~ForeignAsianOption();
