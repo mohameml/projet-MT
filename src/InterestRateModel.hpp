@@ -1,7 +1,7 @@
 #ifndef _Interest_RateModel_HPP
 #define _Interest_RateModel_HPP
 #include <iostream>
-
+#include <nlohmann/json.hpp>
 
 class InterestRateModel {
 
@@ -10,7 +10,8 @@ public :
     std::string id ;
 
     InterestRateModel();
-    InterestRateModel(double rate , std::string id);
+    InterestRateModel(nlohmann::json json);
+    InterestRateModel(double r , std::string id);
     ~InterestRateModel();
 
 

@@ -6,11 +6,18 @@
 #include "pnl/pnl_matrix.h"
 #include "json_reader.hpp"
 #include "InterestRateModel.hpp"
+#include <vector> 
+#include "TimeGrid.hpp"
+
 
 class Option
 {
 public:
     int* assetCurrencyMapping; 
+    std::vector<InterestRateModel> foreignInterestRates;
+    InterestRateModel domesticInterestRate;
+    TimeGrid monitoringTimeGrid;
+    double maturity ;
 
 public:
     Option();
@@ -22,7 +29,7 @@ public:
     /**
      * Destructeur
      */
-    virtual ~Option() {};
+    virtual ~Option();
 
     /**
      * Calcule la valeur du payoff

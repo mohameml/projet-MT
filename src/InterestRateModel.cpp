@@ -5,7 +5,12 @@ InterestRateModel::InterestRateModel()
 {
 }
 
-InterestRateModel::InterestRateModel(double rate, std::string id):rate(rate), id(id)
+InterestRateModel::InterestRateModel(nlohmann::json json)
+{
+
+}
+
+InterestRateModel::InterestRateModel(double r, std::string id) :rate(r) , id(id)
 {
 }
 
