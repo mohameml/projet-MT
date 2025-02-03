@@ -5,10 +5,6 @@ InterestRateModel::InterestRateModel()
 {
 }
 
-InterestRateModel::InterestRateModel(nlohmann::json json)
-{
-
-}
 
 InterestRateModel::InterestRateModel(double r, std::string id) :rate(r) , id(id)
 {
@@ -20,10 +16,12 @@ InterestRateModel::~InterestRateModel()
 
 double InterestRateModel::discount(double t1, double t2)
 {
-    return 0.0;
+    double value = std::exp(-rate*(t2 - t1));
+    return value;
 }
 
 double InterestRateModel::account(double t1, double t2)
 {
-    return 0.0;
+    double value = std::exp(rate*(t2 - t1));
+    return value;
 }

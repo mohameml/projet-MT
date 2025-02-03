@@ -10,7 +10,6 @@ public :
     std::string id ;
 
     InterestRateModel();
-    InterestRateModel(nlohmann::json json);
     InterestRateModel(double r , std::string id);
     ~InterestRateModel();
 

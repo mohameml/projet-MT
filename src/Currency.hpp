@@ -8,9 +8,11 @@
 class  Currency : public RiskyDynamics {
 
 public : 
-
+    InterestRateModel domesticInterestRate;
+    InterestRateModel foreignInterestRate;
     Currency();
-    Currency(nlohmann::json json);
+    Currency(InterestRateModel domesticInterestRate , InterestRateModel foreignInterestRate , double volatility , PnlVect L_i , int index);
+    ~Currency();
 
 
 };

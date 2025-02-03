@@ -10,9 +10,10 @@ class  RiskyAsset : public RiskyDynamics {
 
 public : 
 
-
+    InterestRateModel domesticInterestRate;
     RiskyAsset();
-    RiskyAsset(nlohmann::json json);
+    RiskyAsset(InterestRateModel domesticInterestRate , double realVolatility , PnlVect L_i , int index);
+    ~RiskyAsset();
 
 };
 

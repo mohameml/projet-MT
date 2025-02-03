@@ -3,16 +3,24 @@
 
 
 #include <nlohmann/json.hpp>
-
+#include <vector>
+#include <iostream>
 
 class TimeGrid {
 
+
+private:
+    std::vector<int> grid_time;
+    std::string TimeGridType ;
 public : 
 
+    TimeGrid();
+    TimeGrid(nlohmann::json json);
     int at(int index);
     int len();
     bool has(int nDays);
-
+    void setGridTime(std::vector<int> grid_time);
+    int getLastIndex(int t);
 
 
 };
@@ -22,7 +30,7 @@ public :
 /**
  * return la classe de TimeGrid selon TimeGridType :
  */
-extern TimeGrid *createTimeGridFromJson(const nlohmann::json json);
+extern TimeGrid createTimeGridFromJson(const nlohmann::json json);
 
 
 #endif 

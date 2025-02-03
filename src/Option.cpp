@@ -36,12 +36,12 @@ Option::Option(const nlohmann::json json)
             this->domesticInterestRate = InterestRateModel(rf , currencyId);
         } else {
 
-            this->foreignInterestRates.emplace_back(InterestRateModel(rf , currencyId));
+            this->foreignInterestRates.push_back(InterestRateModel(rf , currencyId));
         }
 
     }
 
-    this->monitoringTimeGrid = *(createTimeGridFromJson(json));
+    this->monitoringTimeGrid = createTimeGridFromJson(json);
     
 
     auto assets = json.at("Assets");

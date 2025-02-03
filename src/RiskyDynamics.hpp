@@ -7,13 +7,16 @@
 class  RiskyDynamics {
 
 public : 
+    int index ;
     double drift ;
-    PnlVect * volatilityVector ;
+    double realVolatility;
+    PnlVect*  volatilityVector ;
 
     RiskyDynamics();
-    RiskyDynamics(nlohmann::json json);
-    void sampleNextDate();
-
+    RiskyDynamics(double dirft , double realVolatility , PnlVect L_i , int index);
+    ~RiskyDynamics();
+    void sampleNextDate(PnlMat* path , double step , const PnlVect* G  , int index_time , bool isMonitoringDate) ;
+    void sampleNextDate(PnlMat *path, double step, const PnlVect *G, int index_time);
 };
 
 
