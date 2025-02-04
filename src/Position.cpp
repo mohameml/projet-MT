@@ -10,6 +10,7 @@ Position::Position()
     deltas = pnl_vect_create_from_double(1 , 0.0);
     deltasStdDev = pnl_vect_create_from_double(1 , 0.0);
     portfolioValue = 0.0 ;
+    cash = 0.0 ;
 }
 
 Position::~Position()
@@ -35,4 +36,27 @@ void to_json(nlohmann::json &j, const Position &position) {
 void Position::print() const {
     nlohmann::json j = *this;
     std::cout << j.dump(4);
+}
+
+
+double Position::UpdatePortfolioValue(int t, double r , PnlVect* spots)
+{
+    cash *= exp(r*(t - date));
+    double res = cash + ComputeValueOfRiskyAssets(spots);
+
+    this->portfolioValue = res ;
+    this->date = t ;
+}
+
+double Position::ComputeValueOfRiskyAssets(PnlVect *spots)
+{
+    double res = 0.0 ;
+
+    for (size_t i = 0; i < deltas->size ; i++)
+    {
+        res += GET(deltas , i)*GET(spots , i);
+    }
+    
+
+    return res;
 }

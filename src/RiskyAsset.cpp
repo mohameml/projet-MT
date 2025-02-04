@@ -4,7 +4,7 @@ RiskyAsset::RiskyAsset()
 {
 }
 
-RiskyAsset::RiskyAsset(InterestRateModel domesticInterestRate, double realVolatility, PnlVect L_i , int index):RiskyDynamics(0.0 , realVolatility , L_i , index)
+RiskyAsset::RiskyAsset(InterestRateModel domesticInterestRate, double realVolatility, PnlVect volatilityVector , int index):RiskyDynamics(0.0 , realVolatility , volatilityVector , index)
 {
     this->domesticInterestRate = domesticInterestRate;
     this->drift =  domesticInterestRate.rate ;

@@ -22,34 +22,39 @@ void Hedger::hedge()
 
     foreignMarketToDomesticMarket(dataHistorique);
 
-    PnlVect* vect = pnl_vect_create_from_scalar(dataHistorique->n , 0.0);
-    pnl_mat_get_row(vect , dataHistorique ,0 );
+    PnlVect* spots = pnl_vect_create_from_scalar(dataHistorique->n , 0.0);
+    pnl_mat_get_row(spots , dataHistorique ,0 );
 
     PnlMat* past = pnl_mat_create(1 , 1);
+    double r = monteCarlo.model->domesticInterestRate.rate ;
 
     for (int t = 1 ; t <= nbDays ; t++)
     {
+        
 
         if(monteCarlo.model->monitoringTimeGrid.has(t)) {
-            // int index = monteCarlo.model->monitoringTimeGrid.getLastIndex(t);
-            pnl_mat_get_row(vect , dataHistorique , t);
+            pnl_mat_get_row(spots , dataHistorique , t);
             pnl_mat_resize(past , past->m + 1 , past->n );
-            pnl_mat_set_row(past , vect  , past->m - 1);
+            pnl_mat_set_row(past , spots  , past->m - 1);
         }
 
 
         if(hedgingPortfolio.rebalacingOrcale.IsRebalancing(t)) {
             
 
+            pnl_mat_get_row(spots , dataHistorique , t);
+
             if(!monteCarlo.model->monitoringTimeGrid.has(t)) {
-                pnl_mat_get_row(vect , dataHistorique , t);
                 pnl_mat_resize(past , past->m + 1 , past->n );
-                pnl_mat_set_row(past , vect  , past->m - 1);
+                pnl_mat_set_row(past , spots  , past->m - 1);
             }
 
-            Position postion ;  
-            monteCarlo.priceAndDelta(t , past , &postion);
-            hedgingPortfolio.positions.push_back(postion);
+            Position position ;  
+            double t_ = (double)t / (double)nbDays;
+            monteCarlo.priceAndDelta(t_ , past , &position);
+            position.UpdatePortfolioValue(t , r ,spots);
+            hedgingPortfolio.positions.push_back(position);
+
 
         }
 

@@ -5,9 +5,9 @@ RiskyDynamics::RiskyDynamics()
 {
 }
 
-RiskyDynamics::RiskyDynamics(double dirft, double realVolatility, PnlVect L_i , int index):drift(drift),realVolatility(realVolatility),volatilityVector(&L_i),index(index)
+RiskyDynamics::RiskyDynamics(double dirft, double realVolatility, PnlVect volatilityVector , int index):drift(drift),realVolatility(realVolatility),volatilityVector(&volatilityVector),index(index)
 {
-    pnl_vect_mult_scalar(this->volatilityVector, realVolatility);
+    // pnl_vect_mult_scalar(this->volatilityVector, realVolatility);
 }
 
 

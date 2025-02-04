@@ -15,16 +15,20 @@ GlobalModel::~GlobalModel()
 GlobalModel::GlobalModel(const nlohmann::json json)
 {
 
+    PnlVect* volatilityVector = pnl_vect_create(L->n);
 
-    auto jsonAssets = json.at("Assets");
+
     std::string domesticCurrencyId;
     json.at("DomesticCurrencyId").get_to(domesticCurrencyId);
 
+    auto jsonAssets = json.at("Assets");
     int assetNb = jsonAssets.size();
-    int index = 0 ;
     
+    int index = 0 ;
     auto jsonCurrencies = json.at("Currencies");
+    
     for (auto jsonCurrency : jsonCurrencies) {
+
         std::string currencyId(jsonCurrency.at("id").get<std::string>());
         double rf = jsonCurrency.at("InterestRate").get<double>();
         double realVolatility = jsonCurrency.at("Volatility").get<double>();
@@ -33,21 +37,34 @@ GlobalModel::GlobalModel(const nlohmann::json json)
             this->domesticInterestRate = InterestRateModel(rf , currencyId);
         } else {
 
-            PnlVect L_i = pnl_vect_wrap_mat_row(L , assetNb + index);
-            auto currency = Currency(this->domesticInterestRate , InterestRateModel(rf , currencyId) , realVolatility , L_i , assetNb + index);
+
+            pnl_mat_get_row(L , volatilityVector , assetNb + index);
+            pnl_vect_mult_scalar(volatilityVector , realVolatility);
+            auto currency = Currency(this->domesticInterestRate , InterestRateModel(rf , currencyId) , realVolatility , volatilityVector , assetNb + index);
             currencies.push_back(currency);
             index++;
         }    
     }
 
     int index_asset = 0 ;
+    
     for (auto jsonAsset : jsonAssets) {
+
         std::string currencyId(jsonAsset.at("CurrencyId").get<std::string>());
         double realVolatility = jsonAsset.at("Volatility").get<double>();
-        PnlVect L_i = pnl_vect_wrap_mat_row(L , index_asset);
+        
+        int index_xi = assetNb + index_asset ;
+        PnlVect* sigmaVectorXi = currencies.at(index_xi).volatilityVector; 
+
+    
+        pnl_vect_get_row(L , volatilityVector , index_asset);
+        pnl_vect_mult_scalar(volatilityVector , realVolatility);
+
+        pnl_vect_plus_vect(volatilityVector , sigmaVectorXi);
+        assets.push_back(RiskyAsset(domesticInterestRate , realVolatility + volatilityOfXi , volatilityVector , index_asset));
+
         index_asset++;
 
-        assets.push_back(RiskyAsset(domesticInterestRate , realVolatility , L_i , index_asset));
     }
 
 
@@ -64,6 +81,11 @@ GlobalModel::GlobalModel(const nlohmann::json json)
     pnl_mat_chol(L);
 
     G = pnl_vect_create(model_size);
+
+
+    pnl_vect_free(&volatilityVector);
+
+
 }
 
 

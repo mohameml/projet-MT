@@ -16,8 +16,6 @@ public:
     Portfolio();
     Portfolio(nlohmann::json &jsonParams, MonteCarlo &monteCarlo);
     ~Portfolio();
-    void UpdatePortfolio();
-    void GetPortfolioValue(int t1 , int t2 , double cash);
-    void ComputeValueOfRiskyAssets();
+
 
 };

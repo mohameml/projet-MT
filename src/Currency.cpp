@@ -4,11 +4,11 @@ Currency::Currency()
 {
 }
 
-Currency::Currency(InterestRateModel domesticInterestRate, InterestRateModel foreignInterestRate, double volatility, PnlVect L_i , int index):RiskyDynamics(0.0 , volatility , L_i , index)
+Currency::Currency(InterestRateModel domesticInterestRate, InterestRateModel foreignInterestRate, double volatility, PnlVect volatilityVector , int index):RiskyDynamics(0.0 , volatility , volatilityVector , index)
 {
     this->domesticInterestRate = domesticInterestRate;
     this->foreignInterestRate = foreignInterestRate;
-    this->drift = domesticInterestRate.rate - foreignInterestRate.rate ;
+    this->drift = domesticInterestRate.rate ;
 }
 
 

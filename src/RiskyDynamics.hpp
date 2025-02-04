@@ -13,7 +13,7 @@ public :
     PnlVect*  volatilityVector ;
 
     RiskyDynamics();
-    RiskyDynamics(double dirft , double realVolatility , PnlVect L_i , int index);
+    RiskyDynamics(double dirft , double realVolatility , PnlVect volatilityVector , int index);
     ~RiskyDynamics();
     void sampleNextDate(PnlMat* path , double step , const PnlVect* G  , int index_time , bool isMonitoringDate) ;
     void sampleNextDate(PnlMat *path, double step, const PnlVect *G, int index_time);
