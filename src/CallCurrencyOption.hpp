@@ -8,8 +8,6 @@ class CallCurrencyOption : public Option
 
 public:
     double strike;
-    PnlVect *payoff_coeffcients;
-    PnlVect *vect_ones;
     CallCurrencyOption();
     CallCurrencyOption(const nlohmann::json json);
     ~CallCurrencyOption();

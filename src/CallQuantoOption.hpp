@@ -8,8 +8,6 @@ class CallQuantoOption : public Option
 
 public:
     double strike;
-    PnlVect *payoff_coeffcients;
-    PnlVect *vect_ones;
     CallQuantoOption();
     CallQuantoOption(const nlohmann::json json);
     ~CallQuantoOption();
