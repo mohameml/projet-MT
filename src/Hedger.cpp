@@ -27,6 +27,7 @@ void Hedger::hedge()
 
     PnlMat* past = pnl_mat_create(1 , 1);
     double r = monteCarlo.model->domesticInterestRate.rate ;
+    bool isFirstTime = true ;
 
     for (int t = 1 ; t <= nbDays ; t++)
     {
@@ -50,6 +51,11 @@ void Hedger::hedge()
             }
 
             Position position ;  
+            if(isFirstTime) {
+                position.portfolioValue = position.price ;
+                position.cash = position.portfolioValue - position.ComputeValueOfRiskyAssets(spots); 
+                isFirstTime = false ;
+            }
             double t_ = (double)t / (double)nbDays;
             monteCarlo.priceAndDelta(t_ , past , &position);
             position.UpdatePortfolioValue(t , r ,spots);
