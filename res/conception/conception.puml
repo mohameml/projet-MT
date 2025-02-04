@@ -1,6 +1,17 @@
 @startuml conception
 
 
+
+class Hedger {
+    + Portfolio hedgingPortfolio;
+
+    + void hedge(PnlMat* dataHistorique )
+    + void foreignMarketToDomesticMarket(PnlMat* Past)
+}
+
+Hedger o-- Portfolio
+
+
 class Portfolio {
     
     + MonteCarlo monteCarlo
@@ -28,6 +39,10 @@ class Position {
     + double price
     + double priceStdDev
     + double portfolioValue
+    + double cash 
+    + double UpdatePortfolioValue(int t , double r , PnlVect* spots);
+    + double ComputeValueOfRiskyAssets(PnlVect* spots);
+
 }
 
 
@@ -138,20 +153,21 @@ class FixedTimeGrid {
 }
 
 
-abstract class  RebalacingOracle  {
+class  RebalacingOracle  {
+    + TimeGrid time_grid
     + bool IsRebalancing(DateTime date)
 }
 
-class FixedRebalacing {
-    - int Count 
-    - int Periode 
-    + override bool IsRebalancing(DateTime date)
-}
+' class FixedRebalacing {
+'     - int Count 
+'     - int Periode 
+'     + override bool IsRebalancing(DateTime date)
+' }
 
-class GridRebalacing {
-    + int DatesInDays
-    + override bool IsRebalancing(DateTime date)
-}
+' class GridRebalacing {
+'     + int DatesInDays
+'     + override bool IsRebalancing(DateTime date)
+' }
 
 
 
@@ -169,8 +185,8 @@ Option <-- ForeignAsianOption
 Option <-- ForeignPerfBasketOption
 Option -- ITimeGrid
 
-RebalacingOracle <|-- FixedRebalacing
-RebalacingOracle <|-- GridRebalacing
+' RebalacingOracle <|-- FixedRebalacing
+' RebalacingOracle <|-- GridRebalacing
 
 
 ITimeGrid <|-- GridTimeGrid 

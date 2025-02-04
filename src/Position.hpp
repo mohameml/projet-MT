@@ -19,7 +19,7 @@ public:
     friend void to_json(nlohmann::json &j, const Position &positions);
     void print() const;
     // void UpdatePortfolio(PnlVect* spots);
-    double UpdatePortfolioValue(int t , double r , PnlVect* spots);
+    double UpdatePortfolioValue(int t , double r , PnlVect* spots ,  bool isFirstTime);
     double ComputeValueOfRiskyAssets(PnlVect* spots);
 };
 

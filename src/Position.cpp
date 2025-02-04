@@ -39,13 +39,22 @@ void Position::print() const {
 }
 
 
-double Position::UpdatePortfolioValue(int t, double r , PnlVect* spots)
+double Position::UpdatePortfolioValue(int t, double r , PnlVect* spots , bool isFirstTime)
 {
-    cash *= exp(r*(t - date));
-    double res = cash + ComputeValueOfRiskyAssets(spots);
 
-    this->portfolioValue = res ;
-    this->date = t ;
+            
+    if(isFirstTime) {
+        portfolioValue = price ;
+        cash = portfolioValue - ComputeValueOfRiskyAssets(spots); 
+        date  = t ;
+    } else {
+        cash *= exp(r*(t - date));
+        portfolioValue = cash + ComputeValueOfRiskyAssets(spots);
+        date = t ;
+    }
+    
+
+
 }
 
 double Position::ComputeValueOfRiskyAssets(PnlVect *spots)

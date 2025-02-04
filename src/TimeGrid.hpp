@@ -21,7 +21,7 @@ public :
     bool has(int nDays);
     void setGridTime(std::vector<int> grid_time);
     int getLastIndex(int t);
-
+    std::vector<int> getAllDates();
 
 };
 

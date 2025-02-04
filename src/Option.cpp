@@ -24,9 +24,11 @@ Option::Option(const nlohmann::json json)
     std::string domesticCurrencyId;
     json.at("DomesticCurrencyId").get_to(domesticCurrencyId);
 
+    // this->foreignInterestRates.resize(jsonCurrencies.size());
     auto jsonCurrencies = json.at("Currencies");
-    this->foreignInterestRates.resize(jsonCurrencies.size());
+
     for (auto jsonCurrency : jsonCurrencies) {
+    
         std::string currencyId(jsonCurrency.at("id").get<std::string>());
         double rf = jsonCurrency.at("InterestRate").get<double>();
 
@@ -42,21 +44,21 @@ Option::Option(const nlohmann::json json)
     this->monitoringTimeGrid = createTimeGridFromJson(json);
     
 
-    auto assets = json.at("Assets");
-    int lenght = jsonCurrencies.size();
-    this->assetCurrencyMapping.resize(lenght);
-    std::map<std::string , int> dit_curr_nb;
 
+    std::map<std::string , int> dit_curr_nbRiskyAsset;
+    auto assets = json.at("Assets");
     for(auto asset : assets) {
         std::string currencyId(asset.at("id").get<std::string>());
-        dit_curr_nb[currencyId]++;
+        dit_curr_nbRiskyAsset[currencyId]++;
     }
 
-    int index =  0 ;
-    for (auto jsonCurrency : jsonCurrencies) {
-        assetCurrencyMapping[index] = dit_curr_nb[jsonCurrency];
-        index++;
+
+    assetCurrencyMapping.push_back(dit_curr_nbRiskyAsset[domesticInterestRate.id]);
+    for(auto curr : foreignInterestRates) {
+        assetCurrencyMapping.push_back(dit_curr_nbRiskyAsset[curr.id]);
     }
+
+
 
     
 }
@@ -68,8 +70,7 @@ Option::~Option()
 Option *instance_option(const nlohmann::json json)
 {
     Option *opt = NULL;
-    string optionType;
-    json.at("option type").get_to(optionType);
+    string optionType  = json.at("Option").at("Type").get<std::string>();
 
     if (optionType == "call_currency")
         opt = new CallCurrencyOption(json);

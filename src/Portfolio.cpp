@@ -12,6 +12,8 @@ Portfolio::Portfolio(nlohmann::json &jsonParams, MonteCarlo &monteCarlo) : monte
 
 
 
-Portfolio::~Portfolio() {
+Portfolio::~Portfolio() 
+{
+
 }
 

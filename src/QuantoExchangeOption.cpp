@@ -6,7 +6,8 @@ QuantoExchangeOption::QuantoExchangeOption()
 
 QuantoExchangeOption::QuantoExchangeOption(const nlohmann::json json)
 {
-    this->strike = json["strike"];
+    // this->strike = json["strike"];
+    strike = json.at("Option").at("Strike").get<double>();
 }
 
 QuantoExchangeOption::~QuantoExchangeOption()

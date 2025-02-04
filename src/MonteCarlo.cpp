@@ -28,13 +28,13 @@ MonteCarlo::~MonteCarlo()
     pnl_rng_free(&rng);
 }
 
-void MonteCarlo::priceAndDelta(double t, const PnlMat *Past, Position* position)
+void MonteCarlo::priceAndDelta(int t, const PnlMat *Past, Position* position)
 {
     int D = model_size;
     int M = sample_number;
     int N = model->monitoringTimeGrid.len();
     double h = fd_step;
-    double T = option->maturity;
+    // double T = option->maturity;
 
 
     double price = 0.0 ;
@@ -48,7 +48,7 @@ void MonteCarlo::priceAndDelta(double t, const PnlMat *Past, Position* position)
     PnlMat *path = pnl_mat_create(N + 1, D);
     for (int i = 0; i < M; i++)
     {
-        model->asset(Past, t, T, path, this->rng);
+        model->asset(Past, t , path, this->rng);
         double phi_j = this->option->payOff(path);
         price += phi_j;
         price_std += phi_j * phi_j;

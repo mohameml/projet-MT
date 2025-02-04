@@ -1,7 +1,5 @@
 #include "RebalacingOracle.hpp"
 
-
-
 RebalancingOracle::RebalancingOracle()
 {
 }

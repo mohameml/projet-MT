@@ -4,7 +4,8 @@
 // Constructor
 CallQuantoOption::CallQuantoOption(const nlohmann::json json): Option(json)
 {
-    json.at("Strike").get_to(strike);
+    // json.at("Strike").get_to(strike);
+    strike = json.at("Option").at("Strike").get<double>();
 
 }
 

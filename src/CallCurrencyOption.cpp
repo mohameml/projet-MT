@@ -6,7 +6,9 @@ CallCurrencyOption::CallCurrencyOption()
 
 CallCurrencyOption::CallCurrencyOption(const nlohmann::json json): Option(json)
 {
-    this->strike = json["strike"];
+    // this->strike = json["strike"];
+    strike = json.at("Option").at("Strike").get<double>();
+    
 }
 
 CallCurrencyOption::~CallCurrencyOption()

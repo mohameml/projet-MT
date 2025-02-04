@@ -2,7 +2,8 @@
 #include    "pnl/pnl_vector.h"
 
 ForeignPerfBasketOption::ForeignPerfBasketOption(const nlohmann::json json) : Option(json) {
-    this->strike = 0;
+    // this->strike = 0;
+    strike = json.at("Option").at("Strike").get<double>();
 }
 
 ForeignPerfBasketOption::~ForeignPerfBasketOption()

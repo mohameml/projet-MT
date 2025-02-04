@@ -9,13 +9,11 @@ class Hedger {
 public :
 
     Portfolio hedgingPortfolio;
-    PnlMat* dataHistorique ;
 
-    Hedger();
-    Hedger(Portfolio hedgingPortfolio , PnlMat* dataHistorique);
+    Hedger(Portfolio hedgingPortfolio);
     ~Hedger();
 
-    void hedge();
+    void hedge(PnlMat* dataHistorique);
     void foreignMarketToDomesticMarket(PnlMat* Past);
 
 

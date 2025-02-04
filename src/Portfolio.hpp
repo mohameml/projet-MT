@@ -1,9 +1,11 @@
-#pragma once
+#ifndef __PORTFOLIO_HPP
+#define __PORTFOLIO_HPP
+
 
 #include <list>
 #include "MonteCarlo.hpp"
 #include "TimeGrid.hpp"
-#include "RebalacingOracle.cpp"
+#include "RebalacingOracle.hpp"
 #include "Position.hpp"
 
 class Portfolio {
@@ -13,9 +15,11 @@ public:
     double cash ;
     RebalancingOracle rebalacingOrcale;
 
-    Portfolio();
     Portfolio(nlohmann::json &jsonParams, MonteCarlo &monteCarlo);
     ~Portfolio();
 
 
 };
+
+
+#endif 

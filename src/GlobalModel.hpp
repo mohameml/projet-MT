@@ -39,6 +39,7 @@ public:
     GlobalModel(const nlohmann::json json);
     ~GlobalModel();
 
+    Currency getCurrencyById(std::string id);
 
     /**
      * Génère une trajectoire du modèle et la stocke dans path (simulation conditionnelle)
@@ -47,11 +48,10 @@ public:
      * C'est une matrice de taille (N+1) x D
      * @param[in] past : matrice de taille (i+1)*D avec i last-index
      * @param[in] t  :  temps actuel
-     * @param[in] T  : maturité
      * @param[in] path : matrice de taille (N+1)xD
      * @param[in] rng : génerateur des nombres aléatoires
      */
-    void asset(const PnlMat *past, double t, double T, PnlMat *path, PnlRng *rng);
+    void asset(const PnlMat *past, int t, PnlMat *path, PnlRng *rng);
 
     /**
      * simuler 2 trajectoires utilisant les mêmes aléas Browniens mais shiftées l’une par rapport à l’autre
@@ -62,6 +62,6 @@ public:
      * @param[in] t : current time 
      *
      */
-    void shift_asset(int d, double t, double h, PnlMat *path);
+    void shift_asset(int d, int t, double h, PnlMat *path);
 };
 #endif

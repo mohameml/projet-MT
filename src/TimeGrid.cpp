@@ -58,6 +58,19 @@ int TimeGrid::getLastIndex(int t)
     return -1;
 }
 
+std::vector<int> TimeGrid::getAllDates()
+{
+    std::vector<int> allDates ;
+    int T = grid_time.at(grid_time.size() - 1);
+
+    for (int t = 1 ; t < T ; t++)
+    {
+        allDates.push_back(t);
+    }
+
+    return allDates;    
+}
+
 TimeGrid createTimeGridFromJson(const nlohmann::json json)
 {
     std::string type = json.at("Option").at("FixingDatesInDays").at("Type").get<std::string>();

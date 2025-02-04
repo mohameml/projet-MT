@@ -3,6 +3,8 @@
 #include "Portfolio.hpp"
 #include <nlohmann/json.hpp>
 #include "MonteCarlo.hpp"
+#include "Hedger.hpp"
+
 
 int main(int argc, char *argv[])
 {
@@ -20,20 +22,25 @@ int main(int argc, char *argv[])
         std::cerr << "Error opening file" << std::endl;
         exit(1);
     }
-    PnlMat *data = pnl_mat_create_from_file(argv[2]);
+
+    // les fichiers : fichier 1 params.json , fichier 2 data.csv
     
     nlohmann::json json = nlohmann::json::parse(file);
+    PnlMat *dataHistorique = pnl_mat_create_from_file(argv[2]);
+    
+
+    // on instance les classes :
 
     MonteCarlo *monte_carlo = new MonteCarlo(json);
-
-
-    
     Portfolio hedgingPortfolio(json, *monte_carlo);
+    Hedger hedger = Hedger(hedgingPortfolio);
+
+    // calcul de positions :
+
+    hedger.hedge(dataHistorique);
     
-    // calculer le portefeuille de couverture
+    // fichier json de sortie 
     
-    
-    // ....
     nlohmann::json jsonPortfolio = hedgingPortfolio.positions;
     std::ofstream ifout(argv[3], std::ios_base::out);
     if (!ifout.is_open()) {
@@ -43,6 +50,8 @@ int main(int argc, char *argv[])
     ifout << jsonPortfolio.dump(4);
     ifout.close();
 
+    delete monte_carlo;
+    pnl_mat_free(&dataHistorique);
 
     return 0;
 }
