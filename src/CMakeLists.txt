@@ -30,15 +30,16 @@ target_link_libraries(fx_hedging ${PNL_LIBRARIES} nlohmann_json::nlohmann_json)
 
 # my_lib 
 # Utiliser GLOB pour inclure tous les fichiers source
-# file(GLOB SRC_FILES ./*.cpp)
+file(GLOB SRC_FILES ./*.cpp)
 
 # # Créer la bibliothèque avec tous les fichiers .cpp trouvés
-# add_library(my_lib ${SRC_FILES} )
+add_library(my_lib ${SRC_FILES} )
 
 
-add_executable(testForeignPerfBasketOption ./tests/testForeignPerfBasketOption.cpp ./ForeignPerfBasketOption.cpp ./Option.cpp ./TimeGrid.cpp ./InterestRateModel.cpp ./FixedTimeGrid.cpp ./GridTimeGrid.cpp)
+# add_executable(testForeignPerfBasketOption ./tests/testForeignPerfBasketOption.cpp ./ForeignPerfBasketOption.cpp ./Option.cpp ./TimeGrid.cpp ./InterestRateModel.cpp ./FixedTimeGrid.cpp ./GridTimeGrid.cpp)
+add_executable(testForeignPerfBasketOption ./tests/testForeignPerfBasketOption.cpp)
 target_link_libraries(testForeignPerfBasketOption
- #my_lib
+ my_lib
  ${PNL_LIBRARIES}
  nlohmann_json::nlohmann_json
 )
