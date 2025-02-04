@@ -33,28 +33,29 @@ file(GLOB SRC_FILES ./*.cpp)
 add_library(my_lib ${SRC_FILES})
 
 # test_json_reader :
-add_executable(test_json_reader json_reader.cpp test_json_reader.cpp)
-target_link_libraries(test_json_reader ${PNL_LIBRARIES} nlohmann_json::nlohmann_json)
-pnl_add_postbuild(test_json_reader)
+# add_executable(test_json_reader json_reader.cpp test_json_reader.cpp)
+# target_link_libraries(test_json_reader ${PNL_LIBRARIES} nlohmann_json::nlohmann_json)
+# pnl_add_postbuild(test_json_reader)
 
 
 # hedging_portfolio  : 
-add_executable(hedging_portfolio main.cpp)
-target_link_libraries(hedging_portfolio
-    my_lib
-    ${PNL_LIBRARIES}
-    nlohmann_json::nlohmann_json
-)
-
-
-
-# add_executable(testForeignPerfBasketOption ./tests/testForeignPerfBasketOption.cpp ./ForeignPerfBasketOption.cpp ./Option.cpp ./TimeGrid.cpp ./InterestRateModel.cpp ./FixedTimeGrid.cpp ./GridTimeGrid.cpp)
-# add_executable(testForeignPerfBasketOption ./tests/testForeignPerfBasketOption.cpp)
-# target_link_libraries(testForeignPerfBasketOption
-#  my_lib
-#  ${PNL_LIBRARIES}
-#  nlohmann_json::nlohmann_json
+# add_executable(hedging_portfolio main.cpp)
+# target_link_libraries(hedging_portfolio
+#     my_lib
+#     ${PNL_LIBRARIES}
+#     nlohmann_json::nlohmann_json
 # )
+
+
+
+
+
+add_executable(testForeignPerfBasketOption ./tests/testForeignPerfBasketOption.cpp)
+target_link_libraries(testForeignPerfBasketOption
+ my_lib
+ ${PNL_LIBRARIES}
+ nlohmann_json::nlohmann_json
+)
 
 
 
