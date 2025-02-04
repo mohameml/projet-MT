@@ -31,7 +31,7 @@ public:
     /**
      * Destructeur
      */
-    virtual ~Option();
+    ~Option();
 
     /**
      * Calcule la valeur du payoff
@@ -48,3 +48,6 @@ public:
 extern Option *instance_option(const nlohmann::json json);
 
 #endif
+
+
+

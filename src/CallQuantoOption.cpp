@@ -10,5 +10,6 @@ CallQuantoOption::CallQuantoOption(const nlohmann::json json): Option(json)
 
 // Method to calculate the payoff
 double CallQuantoOption::payOff(const PnlMat *matrix){
-    return pnl_mat_get(matrix, matrix->m-1, 0) - strike > 0 ? pnl_mat_get(matrix, matrix->m-1, 0) - strike : 0;
+    double r1 = this->foreignInterestRates[0].rate;
+    return pnl_mat_get(matrix, matrix->m-1, 0)*exp(-this->maturity * r1) - strike > 0 ? pnl_mat_get(matrix, matrix->m-1, 0)*exp(-this->maturity * r1) - strike : 0;
 }

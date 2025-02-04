@@ -14,7 +14,10 @@ double ForeignAsianOption::payOff(const PnlMat *matrix) {
     PnlVect *col = pnl_vect_create(N);
     pnl_mat_get_col(col,matrix, 1);
 
-    double sum = pnl_vect_sum(col); 
+    double r1 = this->foreignInterestRates[0].rate;
+
+
+    double sum = pnl_vect_sum(col) * exp(-this->maturity * r1); 
 
     pnl_vect_free(&col);
 
