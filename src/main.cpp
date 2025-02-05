@@ -51,6 +51,9 @@ int main(int argc, char *argv[])
     
 
     nlohmann::json jsonPortfolio = list_postion;
+
+
+
     std::ofstream ifout(argv[3], std::ios_base::out);
     if (!ifout.is_open()) {
         std::cout << "Unable to open file " << argv[3] << std::endl;

@@ -18,7 +18,6 @@ Hedger::~Hedger()
 void Hedger::hedge(PnlMat* dataHistorique)
 {
 
-
     int nbDays = monteCarlo->nbDays;
 
     foreignMarketToDomesticMarket(dataHistorique);
@@ -29,34 +28,32 @@ void Hedger::hedge(PnlMat* dataHistorique)
     PnlMat* past = pnl_mat_create(1 , 1);
     pnl_mat_set_row(past , spots  , 0);
 
-    double r = monteCarlo->model->domesticInterestRate.rate ;
-    bool isFirstTime = true ;
-
-
-
     double price = 0.0 ;
     double price_std = 0.0 ;
     PnlVect *deltas = pnl_vect_create_from_zero(monteCarlo->model_size);
     PnlVect *deltas_std_dev = pnl_vect_create_from_zero(monteCarlo->model_size);
 
 
-    for (int t = 1 ; t <= 2 ; t++)
-    {
-        
+    // double step = 0.0 ;
+    // int t_old = 0 ;
+    // double cash = 0.0;
+    // double value = 0.0;
+    // bool isFirstTime = true ;
 
-        // if(monteCarlo.model->monitoringTimeGrid.has(t)) {
-        //     pnl_mat_get_row(spots , dataHistorique , t);
-        //     // pnl_mat_resize(past , past->m + 1 , past->n );
-        //     pnl_mat_set_row(past , spots  , past->m - 1);
-        // }
+    double r = monteCarlo->model->domesticInterestRate.rate ;
+
+
+
+
+    for (int t = 0 ; t <= nbDays ; t++)
+    {
 
         if(hedgingPortfolio->rebalacingOrcale.IsRebalancing(t)) {
             
 
-
-            if(!monteCarlo->model->monitoringTimeGrid.has(t) && monteCarlo->model->monitoringTimeGrid.has(t - 1)) { // 0 est une data de constattion  t_0 = 0 
+            // 0 est une data de constation  t_0 = 0 
+            if(!monteCarlo->model->monitoringTimeGrid.has(t) && monteCarlo->model->monitoringTimeGrid.has(t - 1)) { 
                 pnl_mat_resize(past , past->m + 1 , past->n );
-                // pnl_mat_set_row(past , spots  , past->m - 1);
             }
 
             pnl_mat_get_row(spots , dataHistorique , t);
@@ -66,16 +63,31 @@ void Hedger::hedge(PnlMat* dataHistorique)
             
             monteCarlo->priceAndDelta(t , past , price , price_std  , deltas , deltas_std_dev);
 
+            Position* position = new Position(t , price , price_std , deltas , deltas_std_dev ,price);
+            
+            // if(isFirstTime) {
+                
+            //     position = new Position(t , price , price_std , deltas , deltas_std_dev ,price); 
+            //     cash = price - position->ComputeValueOfRiskyAssets(spots , deltas);
+            //     cash = position->GetValueOfCash(spots);
+            // } else {
+            //     step = ((double)t - (double)t_old)/ (double) monteCarlo->numberOfDaysPerYear;
+            //     cash *= std::exp(r*step);
+            //     position = new Position(t , price , price_std , deltas , deltas_std_dev ,0.0);
+            //     PnlVect* last_deltas =  hedgingPortfolio->positions.back()->deltas;
+            //     position->UpdatePortfolioValue(cash , spots , last_deltas);
+            //     cash = position->GetValueOfCash(spots);
+            //     // cash = position->portfolioValue - position->ComputeValueOfRiskyAssets(spots , deltas);
 
-            Position* position = new Position(t , price , price_std , deltas , deltas_std_dev , 0.0); 
+
+            // }
 
 
-            position->UpdatePortfolioValue(t , r ,spots , isFirstTime);
+            // hedgingPortfolio->positions.push_back(position);
+            // isFirstTime = false ;
+            // t_old = t ;
 
-
-            hedgingPortfolio->positions.push_back(position);
-            isFirstTime = false ;
-
+            hedgingPortfolio->addPosition(position , t , r , spots);
 
         }
 
@@ -102,16 +114,25 @@ void Hedger::foreignMarketToDomesticMarket(PnlMat *Past)
         for (size_t i = 1 ; i < assetCurrencyMapping.size(); i++)
         {
             int ni = assetCurrencyMapping.at(i);
+            int index_xi = nbAsset + i;
             
             for (size_t j = n0 ; j < n0 + ni ; j++)
             {
-                int index_xi = nbAsset + i;
-                MLET(Past , t , j) *= MGET(Past , t , index_xi); 
+                MLET(Past , t , j) = MGET(Past , t , j)*MGET(Past , t , index_xi); 
             }
 
             n0+=ni;
 
         }
+
+
+        for (size_t j = 0; j < monteCarlo->model->currencies.size(); j++)
+        {
+            double t_ = (double) t / (double) monteCarlo->numberOfDaysPerYear;
+            double rf = monteCarlo->option->foreignInterestRates.at(j).rate;
+            MLET(Past , t , nbAsset + j) = MLET(Past , t , nbAsset + j)*std::exp(rf*t_);
+        }
+        
         
         
         

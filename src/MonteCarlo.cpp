@@ -16,6 +16,7 @@ MonteCarlo::MonteCarlo(const nlohmann::json json)
     model_size = model->assets.size() + model->currencies.size();
 
     nbDays = json.at("Option").at("MaturityInDays").get<int>();
+    numberOfDaysPerYear = json.at("NumberOfDaysInOneYear").get<int>();
 
     rng = pnl_rng_create(PNL_RNG_MERSENNE);
     pnl_rng_sseed(rng, time(NULL));
@@ -69,9 +70,10 @@ void MonteCarlo::priceAndDelta(int t, const PnlMat *Past, double& price , double
         }
     }
 
-    end_of_calcul_price(price, price_std, t);
+    double t_ = (double) t / (double) numberOfDaysPerYear;
+    end_of_calcul_price(price, price_std, t_);
     PnlVect St = pnl_vect_wrap_mat_row(Past, Past->m - 1);
-    end_of_calcul_delta(deltas_vect, stddev_deltas_vect, t, &St);
+    end_of_calcul_delta(deltas_vect, stddev_deltas_vect, t_, &St);
 
 
     std::cout << "========== t " << t  << "================" << std::endl ;

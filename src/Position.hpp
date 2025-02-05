@@ -12,14 +12,16 @@ public:
     double price;
     double priceStdDev;
     double portfolioValue;
-    double cash ;
+
     ~Position();
     Position(int date, double price, double priceStdDev, PnlVect* deltas, PnlVect* deltasStdDev, double portfolioValue);
+    
     friend void to_json(nlohmann::json &j, const Position &positions);
     void print() const;
-    // void UpdatePortfolio(PnlVect* spots);
-    double UpdatePortfolioValue(int t , double r , PnlVect* spots ,  bool isFirstTime);
-    double ComputeValueOfRiskyAssets(PnlVect* spots);
+    
+    double GetValueOfCash(PnlVect* spots);
+    double UpdatePortfolioValue(double cash,PnlVect* spots , PnlVect* last_deltas );
+    double ComputeValueOfRiskyAssets(PnlVect* spots ,  PnlVect* deltas_);
 };
 
 

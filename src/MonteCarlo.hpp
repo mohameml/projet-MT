@@ -18,6 +18,7 @@ public:
     PnlRng *rng;    
     int model_size ; /// size of the model 
     int nbDays ;
+    int numberOfDaysPerYear;
 
 public : 
     MonteCarlo();

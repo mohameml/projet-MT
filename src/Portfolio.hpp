@@ -11,11 +11,14 @@
 class Portfolio {
 public:
     std::list<Position*> positions;
-    Position* pos ; 
-    double cash ;
+    double cashGlobal ;
+    int lastTimeUpdate ;
+    int numberOfDaysPerYear;
+    bool isFirstTime;
     RebalancingOracle rebalacingOrcale;
 
     Portfolio(nlohmann::json &jsonParams);
+    void addPosition(Position* position , int  t , double r ,  PnlVect* spots);
     ~Portfolio();
 
 

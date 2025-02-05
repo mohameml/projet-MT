@@ -39,12 +39,12 @@ add_library(my_lib ${SRC_FILES})
 
 
 # hedging_portfolio  : 
-# add_executable(hedging_portfolio main.cpp)
-# target_link_libraries(hedging_portfolio
-#     my_lib
-#     ${PNL_LIBRARIES}
-#     nlohmann_json::nlohmann_json
-# )
+add_executable(hedging_portfolio main.cpp)
+target_link_libraries(hedging_portfolio
+    my_lib
+    ${PNL_LIBRARIES}
+    nlohmann_json::nlohmann_json
+)
 
 
 

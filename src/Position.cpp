@@ -29,12 +29,23 @@ Position::Position(int date, double price, double priceStdDev, PnlVect *deltas, 
 }
 
 void to_json(nlohmann::json &j, const Position& position) {
+
+
     j["date"] = position.date;
     j["value"] = position.portfolioValue;
     j["price"] = position.price;
     j["priceStdDev"] = position.priceStdDev;
     j["deltas"] = position.deltas;
     j["deltasStdDev"] = position.deltasStdDev;
+
+
+    // j["date"] = position->date;
+    // j["value"] = position->portfolioValue;
+    // j["price"] = position->price;
+    // j["priceStdDev"] = position->priceStdDev;
+    // j["deltas"] = position->deltas;
+    // j["deltasStdDev"] = position->deltasStdDev;
+
 }
 
 void Position::print() const {
@@ -43,33 +54,29 @@ void Position::print() const {
 }
 
 
-double Position::UpdatePortfolioValue(int t, double r , PnlVect* spots , bool isFirstTime)
+double Position::UpdatePortfolioValue(double cash , PnlVect* spots , PnlVect* last_deltas )
 {
 
-            
-    if(isFirstTime) {
-        portfolioValue = price ;
-        cash = portfolioValue - ComputeValueOfRiskyAssets(spots); 
-        date  = t ;
-    } else {
-        cash *= exp(r*(t - date));
-        portfolioValue = cash + ComputeValueOfRiskyAssets(spots);
-        date = t ;
-    }
-    
-
-
+    portfolioValue = cash + ComputeValueOfRiskyAssets(spots , last_deltas);
 }
 
-double Position::ComputeValueOfRiskyAssets(PnlVect *spots)
+
+double Position::ComputeValueOfRiskyAssets(PnlVect *spots , PnlVect* deltas_)
 {
     double res = 0.0 ;
 
-    for (size_t i = 0; i < deltas->size ; i++)
+    for (size_t i = 0; i < deltas_->size ; i++)
     {
-        res += GET(deltas , i)*GET(spots , i);
+        res += GET(deltas_ , i)*GET(spots , i);
     }
     
 
     return res;
+}
+
+double Position::GetValueOfCash(PnlVect *spots)
+{
+    double cash = portfolioValue - ComputeValueOfRiskyAssets(spots , deltas);
+
+    return cash ;
 }
