@@ -48,7 +48,7 @@ Option::Option(const nlohmann::json json)
     std::map<std::string , int> dit_curr_nbRiskyAsset;
     auto assets = json.at("Assets");
     for(auto asset : assets) {
-        std::string currencyId(asset.at("id").get<std::string>());
+        std::string currencyId(asset.at("CurrencyId").get<std::string>());
         dit_curr_nbRiskyAsset[currencyId]++;
     }
 

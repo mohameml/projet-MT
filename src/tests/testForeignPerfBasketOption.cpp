@@ -1,4 +1,4 @@
-#include <iostream>
+// #include <iostream>
 // #include <cassert>
 // #include "../ForeignPerfBasketOption.hpp"
 // #include "pnl/pnl_matrix.h"
@@ -8,6 +8,10 @@
 
     
 //     // Create an instance of ForeignPerfBasketOption
+
+
+
+
 //     ForeignPerfBasketOption option(jsonConfig);
 
 //     // Create a sample PnlMat matrix
@@ -33,7 +37,7 @@
 //     std::cout << "Test passed!" << std::endl;
 // }
 
-int main() {
-    // test_payOff();
-    return 0;
-}
+// int main() {
+//     // test_payOff();
+//     return 0;
+// }

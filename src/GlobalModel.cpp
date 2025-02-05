@@ -7,7 +7,6 @@ GlobalModel::GlobalModel()
 GlobalModel::~GlobalModel()
 {
     pnl_vect_free(&G);
-    pnl_mat_free(&C);
     pnl_mat_free(&L);
 }
 
@@ -21,13 +20,19 @@ GlobalModel::GlobalModel(const nlohmann::json json)
     
     // ==== Correlations and matrice cholesky :  ==== 
 
-    json.at("Correlations").get_to(C);
-    model_size = C->n;
-
-    L = pnl_mat_create(model_size , model_size);
-    for (int i = 0; i < model_size; i++)
-        pnl_mat_set_diag(L, 1.0, i);
+    json.at("Correlations").get_to(L);
     pnl_mat_chol(L);
+
+    model_size = L->n;
+    
+    // pnl_mat_print(C);
+
+    // L = pnl_mat_create(model_size , model_size);
+    // for (int i = 0; i < model_size; i++)
+    //     pnl_mat_set_diag(L, 1.0, i);
+    
+    // pnl_mat_print(L);
+    // pnl_mat_print(L);
 
     // ====== numberOfDaysPerYear ===== 
     numberOfDaysPerYear = json.at("NumberOfDaysInOneYear").get<int>();
@@ -128,7 +133,7 @@ void GlobalModel::asset(const PnlMat *past, int t, PnlMat *path, PnlRng *rng)
     pnl_mat_set_subblock(path, past, 0, 0);
     pnl_vect_rng_normal(G, model_size, rng);
     double step = (monitoringTimeGrid.at(last_index + 1) - t)  / (double)numberOfDaysPerYear ;
-    double isMonitoringDate = monitoringTimeGrid.has(t);
+    bool isMonitoringDate = monitoringTimeGrid.has(t);
 
     for (const auto& risky_asset : assets)
     {

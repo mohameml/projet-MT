@@ -22,7 +22,6 @@ public:
     // double time_step;     /// time step = T / N
 
 
-    PnlMat* C; /// matrice de corrélation 
     PnlMat *L;            /// raccine carrée de matrice de corrélation
     PnlVect *G;           /// Vector for simulation
     std::vector<std::unique_ptr<Currency>>  currencies;
