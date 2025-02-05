@@ -9,6 +9,10 @@ TimeGrid::TimeGrid()
 {
 }
 
+TimeGrid::~TimeGrid()
+{
+}
+
 TimeGrid::TimeGrid(nlohmann::json json)
 {
     TimeGridType = json.at("Option").at("FixingDatesInDays").at("Type").get<std::string>();
@@ -51,7 +55,7 @@ int TimeGrid::getLastIndex(int t)
     for (int i = 0; i < grid_time.size(); i++)
     {
         if(grid_time.at(i) > t) {
-            return i ;
+            return i - 1;
         }
     }
     

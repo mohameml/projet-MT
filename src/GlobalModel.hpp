@@ -25,12 +25,13 @@ public:
     PnlMat* C; /// matrice de corrélation 
     PnlMat *L;            /// raccine carrée de matrice de corrélation
     PnlVect *G;           /// Vector for simulation
-    std::vector<Currency> currencies;
+    std::vector<std::unique_ptr<Currency>>  currencies;
     InterestRateModel domesticInterestRate;
-    std::vector<RiskyAsset> assets ;
+    std::vector<std::unique_ptr<RiskyAsset>> assets ;
     TimeGrid monitoringTimeGrid;
     int model_size ;
     int numberOfDaysPerYear;
+
 
 
 
@@ -39,7 +40,7 @@ public:
     GlobalModel(const nlohmann::json json);
     ~GlobalModel();
 
-    Currency getCurrencyById(std::string id);
+    Currency*getCurrencyById(std::string id);
 
     /**
      * Génère une trajectoire du modèle et la stocke dans path (simulation conditionnelle)

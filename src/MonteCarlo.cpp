@@ -45,10 +45,18 @@ void MonteCarlo::priceAndDelta(int t, const PnlMat *Past, Position* position)
 
 
 
-    PnlMat *path = pnl_mat_create(N + 1, D);
+    PnlMat *path = pnl_mat_create(N, D);
     for (int i = 0; i < M; i++)
     {
         model->asset(Past, t , path, this->rng);
+        
+        if(i == 0) {
+
+            std::cout << "=======" << std::endl;
+            pnl_mat_print(path);
+
+        }
+
         double phi_j = this->option->payOff(path);
         price += phi_j;
         price_std += phi_j * phi_j;
@@ -71,6 +79,11 @@ void MonteCarlo::priceAndDelta(int t, const PnlMat *Past, Position* position)
     end_of_calcul_delta(deltas_vect, stddev_deltas_vect, t, &St);
 
 
+    std::cout << "========== t " << t  << "================" << std::endl ;
+    std::cout << "price =" << price << std::endl ;
+    std::cout << "price std =" << price_std << std::endl ;
+
+
     position->price = price;
     position->priceStdDev = price_std;
     pnl_vect_clone(position->deltas , deltas_vect);
@@ -78,6 +91,8 @@ void MonteCarlo::priceAndDelta(int t, const PnlMat *Past, Position* position)
 
 
     pnl_mat_free(&path);
+    pnl_vect_free(&deltas_vect);
+    pnl_vect_free(&stddev_deltas_vect);
 
 }
 

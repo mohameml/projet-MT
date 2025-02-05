@@ -18,6 +18,6 @@ CallCurrencyOption::~CallCurrencyOption()
 double CallCurrencyOption::payOff(const PnlMat *matrix)
 {   
     
-    return pnl_mat_get(matrix, matrix->m-1, 0) - strike > 0 ? pnl_mat_get(matrix, matrix->m-1, 0) - strike : 0;
+    return pnl_mat_get(matrix, matrix->m -1 , 0) - strike > 0 ? pnl_mat_get(matrix, matrix->m-1, 0) - strike : 0;
 }
 

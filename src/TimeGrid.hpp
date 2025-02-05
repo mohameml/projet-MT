@@ -9,12 +9,13 @@
 class TimeGrid {
 
 
-private:
-    std::vector<int> grid_time;
-    std::string TimeGridType ;
+
 public : 
 
+    std::vector<int> grid_time;
+    std::string TimeGridType ;
     TimeGrid();
+    ~TimeGrid();
     TimeGrid(nlohmann::json json);
     int at(int index);
     int len();

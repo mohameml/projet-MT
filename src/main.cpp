@@ -32,8 +32,8 @@ int main(int argc, char *argv[])
     // on instance les classes :
 
     MonteCarlo *monte_carlo = new MonteCarlo(json);
-    Portfolio hedgingPortfolio(json, *monte_carlo);
-    Hedger hedger = Hedger(hedgingPortfolio);
+    Portfolio* hedgingPortfolio = new Portfolio(json, *monte_carlo);
+    Hedger hedger = Hedger(*hedgingPortfolio);
 
     // calcul de positions :
 
@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
     
     // fichier json de sortie 
     
-    nlohmann::json jsonPortfolio = hedgingPortfolio.positions;
+    nlohmann::json jsonPortfolio = hedgingPortfolio->positions;
     std::ofstream ifout(argv[3], std::ios_base::out);
     if (!ifout.is_open()) {
         std::cout << "Unable to open file " << argv[3] << std::endl;
@@ -51,6 +51,7 @@ int main(int argc, char *argv[])
     ifout.close();
 
     delete monte_carlo;
+    delete hedgingPortfolio;
     pnl_mat_free(&dataHistorique);
 
     return 0;

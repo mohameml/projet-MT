@@ -33,18 +33,18 @@ GlobalModel::GlobalModel(const nlohmann::json json)
     numberOfDaysPerYear = json.at("NumberOfDaysInOneYear").get<int>();
 
     // ===== vecteur of simulation G : ===== 
-    G = pnl_vect_create(model_size);
+    G = pnl_vect_create_from_double(model_size , 0.0);
 
     // ================== Currencies ============== 
 
-    PnlVect* volatilityVector = pnl_vect_create(model_size);
+    PnlVect* volatilityVector = pnl_vect_create_from_double(model_size , 0.0);
 
     std::string domesticCurrencyId;
     json.at("DomesticCurrencyId").get_to(domesticCurrencyId);
 
     int index = 0 ;
     auto jsonCurrencies = json.at("Currencies");
-    int assetNb = model_size - jsonCurrencies.size();
+    int assetNb = model_size - (jsonCurrencies.size() - 1);
     
     for (auto jsonCurrency : jsonCurrencies) {
 
@@ -58,8 +58,9 @@ GlobalModel::GlobalModel(const nlohmann::json json)
 
             pnl_mat_get_row(volatilityVector , L , assetNb + index);
             pnl_vect_mult_scalar(volatilityVector , realVolatility);
-            auto currency = Currency(domesticInterestRate , InterestRateModel(rf , currencyId) , realVolatility , *volatilityVector , assetNb + index);
-            currencies.push_back(currency);
+        
+            currencies.push_back(std::make_unique<Currency>(domesticInterestRate , InterestRateModel(rf , currencyId) , realVolatility , volatilityVector , assetNb + index));
+        
             index++;
         }    
     }
@@ -74,13 +75,13 @@ GlobalModel::GlobalModel(const nlohmann::json json)
         std::string currencyId(jsonAsset.at("CurrencyId").get<std::string>());
         double realVolatility = jsonAsset.at("Volatility").get<double>();
         
-        Currency currencyOfAsset = getCurrencyById(currencyId); 
+        Currency* currencyOfAsset = getCurrencyById(currencyId); 
 
         pnl_mat_get_row(volatilityVector , L , index_asset);
         pnl_vect_mult_scalar(volatilityVector , realVolatility);
-        pnl_vect_plus_vect(volatilityVector , currencyOfAsset.volatilityVector);
+        pnl_vect_plus_vect(volatilityVector , currencyOfAsset->volatilityVector);
 
-        assets.push_back(RiskyAsset(domesticInterestRate , realVolatility + currencyOfAsset.realVolatility , *volatilityVector , index_asset));
+        assets.push_back(std::make_unique<RiskyAsset>(domesticInterestRate , realVolatility + currencyOfAsset->realVolatility , volatilityVector , index_asset));
 
         index_asset++;
 
@@ -91,17 +92,17 @@ GlobalModel::GlobalModel(const nlohmann::json json)
 
 
 
-    pnl_vect_free(&volatilityVector);
+    // pnl_vect_free(&volatilityVector);
 
 
 }
 
 
-Currency GlobalModel::getCurrencyById(std::string id) {
-    for (auto curr : currencies)
+Currency* GlobalModel::getCurrencyById(std::string id) {
+    for (const auto& curr : currencies)
     {
-        if(curr.foreignInterestRate.id == id) {
-            return curr;
+        if(curr->foreignInterestRate.id == id) {
+            return curr.get();
         }
     }
     
@@ -126,17 +127,17 @@ void GlobalModel::asset(const PnlMat *past, int t, PnlMat *path, PnlRng *rng)
 
     pnl_mat_set_subblock(path, past, 0, 0);
     pnl_vect_rng_normal(G, model_size, rng);
-    double step = (monitoringTimeGrid.at(last_index + 1) - t)  / (double)numberOfDaysPerYear;; 
+    double step = (monitoringTimeGrid.at(last_index + 1) - t)  / (double)numberOfDaysPerYear ;
     double isMonitoringDate = monitoringTimeGrid.has(t);
 
-    for (auto risky_asset : assets)
+    for (const auto& risky_asset : assets)
     {
-        risky_asset.sampleNextDate(path , step , G , last_index + 1 , isMonitoringDate);
+        risky_asset->sampleNextDate(path , step , G , last_index + 1 , isMonitoringDate);
     }
 
-    for (auto currency : currencies)
+    for (const auto& currency : currencies)
     {
-        currency.sampleNextDate(path , step , G , last_index + 1 , isMonitoringDate);
+        currency->sampleNextDate(path , step , G , last_index + 1 , isMonitoringDate);
     }
 
 
@@ -147,14 +148,14 @@ void GlobalModel::asset(const PnlMat *past, int t, PnlMat *path, PnlRng *rng)
         step = (monitoringTimeGrid.at(i)  - monitoringTimeGrid.at(i - 1)) / (double)numberOfDaysPerYear;
         pnl_vect_rng_normal(G, model_size, rng);
 
-        for (auto risky_asset : assets)
+        for (const auto& risky_asset : assets)
         {
-            risky_asset.sampleNextDate(path , step , G , i);
+            risky_asset->sampleNextDate(path , step , G , i);
         }
 
-        for (auto currency : currencies)
+        for (const auto& currency : currencies)
         {
-            currency.sampleNextDate(path , step , G , i);
+            currency->sampleNextDate(path , step , G , i);
         }
 
     }

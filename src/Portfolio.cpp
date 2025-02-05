@@ -5,7 +5,7 @@
 
 Portfolio::Portfolio(nlohmann::json &jsonParams, MonteCarlo &monteCarlo) : monteCarlo(monteCarlo)
 {
-    rebalacingOrcale = RebalancingOracle(jsonParams);
+    rebalacingOrcale = createRebalancingOracleFromJson(jsonParams);
 }
 
 
@@ -14,6 +14,10 @@ Portfolio::Portfolio(nlohmann::json &jsonParams, MonteCarlo &monteCarlo) : monte
 
 Portfolio::~Portfolio() 
 {
-
+    // for (auto& pos : positions)
+    // {
+    //     delete pos;  
+    // }
+    
 }
 

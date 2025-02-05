@@ -12,7 +12,7 @@ public :
 
     InterestRateModel domesticInterestRate;
     RiskyAsset();
-    RiskyAsset(InterestRateModel domesticInterestRate , double realVolatility , PnlVect volatilityVector , int index);
+    RiskyAsset(InterestRateModel domesticInterestRate , double realVolatility , PnlVect* volatilityVector , int index);
     ~RiskyAsset();
 
 };

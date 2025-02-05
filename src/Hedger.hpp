@@ -8,9 +8,9 @@ class Hedger {
 
 public :
 
-    Portfolio hedgingPortfolio;
+    Portfolio& hedgingPortfolio;
 
-    Hedger(Portfolio hedgingPortfolio);
+    Hedger(Portfolio& hedgingPortfolio);
     ~Hedger();
 
     void hedge(PnlMat* dataHistorique);

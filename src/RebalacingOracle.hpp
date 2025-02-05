@@ -15,6 +15,11 @@ public:
 };
 
 
+/**
+ * return la classe de RebalancingOracle selon TimeGridType :
+ */
+extern RebalancingOracle createRebalancingOracleFromJson(const nlohmann::json json);
+
 
 
 #endif 

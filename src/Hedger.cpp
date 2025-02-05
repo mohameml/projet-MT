@@ -1,7 +1,7 @@
 #include "Hedger.hpp"
 
 
-Hedger::Hedger(Portfolio hedgingPortfolio):hedgingPortfolio(hedgingPortfolio)
+Hedger::Hedger(Portfolio& hedgingPortfolio):hedgingPortfolio(hedgingPortfolio)
 {
 }
 
@@ -22,6 +22,8 @@ void Hedger::hedge(PnlMat* dataHistorique)
     pnl_mat_get_row(spots , dataHistorique ,0 );
 
     PnlMat* past = pnl_mat_create(1 , 1);
+    pnl_mat_set_row(past , spots  , 0);
+
     double r = monteCarlo.model->domesticInterestRate.rate ;
     bool isFirstTime = true ;
 
@@ -32,26 +34,27 @@ void Hedger::hedge(PnlMat* dataHistorique)
     // }
     
 
-    for (int t = 1 ; t <= nbDays ; t++)
+    for (int t = 1 ; t <= 2 ; t++)
     {
         
 
-        if(monteCarlo.model->monitoringTimeGrid.has(t)) {
-            pnl_mat_get_row(spots , dataHistorique , t);
-            pnl_mat_resize(past , past->m + 1 , past->n );
-            pnl_mat_set_row(past , spots  , past->m - 1);
-        }
-
+        // if(monteCarlo.model->monitoringTimeGrid.has(t)) {
+        //     pnl_mat_get_row(spots , dataHistorique , t);
+        //     // pnl_mat_resize(past , past->m + 1 , past->n );
+        //     pnl_mat_set_row(past , spots  , past->m - 1);
+        // }
 
         if(hedgingPortfolio.rebalacingOrcale.IsRebalancing(t)) {
             
 
-            pnl_mat_get_row(spots , dataHistorique , t);
 
-            if(!monteCarlo.model->monitoringTimeGrid.has(t)) {
+            if(!monteCarlo.model->monitoringTimeGrid.has(t) && monteCarlo.model->monitoringTimeGrid.has(t - 1)) { // 0 est une data de constattion  t_0 = 0 
                 pnl_mat_resize(past , past->m + 1 , past->n );
-                pnl_mat_set_row(past , spots  , past->m - 1);
+                // pnl_mat_set_row(past , spots  , past->m - 1);
             }
+
+            pnl_mat_get_row(spots , dataHistorique , t);
+            pnl_mat_set_row(past , spots  , past->m - 1);
 
             Position position ;  
             // double t_ = (double)t / (double)nbDays;
@@ -68,6 +71,9 @@ void Hedger::hedge(PnlMat* dataHistorique)
         }
 
     }
+
+
+    pnl_vect_free(&spots);
     
 }
 

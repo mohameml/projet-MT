@@ -5,9 +5,19 @@ RiskyDynamics::RiskyDynamics()
 {
 }
 
-RiskyDynamics::RiskyDynamics(double dirft, double realVolatility, PnlVect volatilityVector , int index):drift(drift),realVolatility(realVolatility),volatilityVector(&volatilityVector),index(index)
+RiskyDynamics::RiskyDynamics(double dirft, double realVolatility, PnlVect* volatilityVector_ , int index):drift(drift),realVolatility(realVolatility),index(index)
 {
     // pnl_vect_mult_scalar(this->volatilityVector, realVolatility);
+    int len = volatilityVector_->size;
+    this->volatilityVector = pnl_vect_create_from_double( len , 0.0);
+    for (size_t i = 0; i < len; i++)
+    {
+        LET(this->volatilityVector , i) = GET(volatilityVector_ , i);
+    }
+    
+
+
+    // pnl_vect_clone(this->volatilityVector , volatilityVector_);
 }
 
 

@@ -11,7 +11,7 @@ public :
     InterestRateModel domesticInterestRate;
     InterestRateModel foreignInterestRate;
     Currency();
-    Currency(InterestRateModel domesticInterestRate , InterestRateModel foreignInterestRate , double volatility , PnlVect volatilityVector , int index);
+    Currency(InterestRateModel domesticInterestRate , InterestRateModel foreignInterestRate , double volatility , PnlVect* volatilityVector , int index);
     ~Currency();
 
 
