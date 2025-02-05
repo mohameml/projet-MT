@@ -4,7 +4,7 @@ QuantoExchangeOption::QuantoExchangeOption()
 {
 }
 
-QuantoExchangeOption::QuantoExchangeOption(const nlohmann::json json)
+QuantoExchangeOption::QuantoExchangeOption(const nlohmann::json json):Option(json)
 {
     // this->strike = json["strike"];
     strike = json.at("Option").at("Strike").get<double>();
@@ -16,7 +16,11 @@ QuantoExchangeOption::~QuantoExchangeOption()
 
 double QuantoExchangeOption::payOff(const PnlMat *matrix)
 {   
-    double r1 = this->foreignInterestRates[0].rate;
-    return pnl_mat_get(matrix, matrix->m-1, 0)-pnl_mat_get(matrix, matrix->m-1, 1)*exp(-this->maturity * r1) - strike > 0 ? pnl_mat_get(matrix, matrix->m-1, 0)-pnl_mat_get(matrix, matrix->m-1, 1)*exp(-this->maturity * r1) - strike : 0;
+    double S0_T = pnl_mat_get(matrix, matrix->m-1, 0); 
+    double SX_T = pnl_mat_get(matrix, matrix->m-1, 1);
+
+    double payOff = std::max(S0_T - SX_T - strike , 0.0);
+
+    return payOff;
 }
 

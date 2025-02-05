@@ -46,7 +46,7 @@ void MonteCarlo::priceAndDelta(int t, const PnlMat *Past, double& price , double
     {
         model->asset(Past, t , path, this->rng);
         
-        if(i == 0) {
+        if(i == M - 1) {
 
             std::cout << "=======" << std::endl;
             pnl_mat_print(path);

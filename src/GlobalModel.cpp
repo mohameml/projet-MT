@@ -80,13 +80,24 @@ GlobalModel::GlobalModel(const nlohmann::json json)
         std::string currencyId(jsonAsset.at("CurrencyId").get<std::string>());
         double realVolatility = jsonAsset.at("Volatility").get<double>();
         
-        Currency* currencyOfAsset = getCurrencyById(currencyId); 
+        if(currencyId == domesticCurrencyId) {
+            pnl_mat_get_row(volatilityVector , L , index_asset);
+            pnl_vect_mult_scalar(volatilityVector , realVolatility);
+            assets.push_back(std::make_unique<RiskyAsset>(domesticInterestRate , realVolatility , volatilityVector , index_asset));
 
-        pnl_mat_get_row(volatilityVector , L , index_asset);
-        pnl_vect_mult_scalar(volatilityVector , realVolatility);
-        pnl_vect_plus_vect(volatilityVector , currencyOfAsset->volatilityVector);
+        } else {
 
-        assets.push_back(std::make_unique<RiskyAsset>(domesticInterestRate , realVolatility + currencyOfAsset->realVolatility , volatilityVector , index_asset));
+            Currency* currencyOfAsset = getCurrencyById(currencyId); 
+
+            pnl_mat_get_row(volatilityVector , L , index_asset);
+            pnl_vect_mult_scalar(volatilityVector , realVolatility);
+            pnl_vect_plus_vect(volatilityVector , currencyOfAsset->volatilityVector);
+
+            assets.push_back(std::make_unique<RiskyAsset>(domesticInterestRate , realVolatility + currencyOfAsset->realVolatility , volatilityVector , index_asset));
+        }
+
+
+
 
         index_asset++;
 

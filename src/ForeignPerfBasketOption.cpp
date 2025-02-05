@@ -28,6 +28,7 @@ double ForeignPerfBasketOption::payOff(const PnlMat *matrix)
     int t3 = matrix->m-1;
 
     double performance =0;
+
     for (size_t i = 1 ; i < assetCurrencyMapping.size(); i++)
     {
         int ni = assetCurrencyMapping.at(i);
@@ -35,7 +36,7 @@ double ForeignPerfBasketOption::payOff(const PnlMat *matrix)
         double sum1 = 0; 
         for (size_t j = n0 ; j < n0 + ni ; j++)
         {
-            int index_xi = nbAsset + i;
+            int index_xi = nbAsset + i - 1;
             double si_t1 = MGET(matrix , t1 , j) /MGET(matrix , t1 , index_xi);
             double si_t2 = MGET(matrix , t2 , j) /MGET(matrix , t2 , index_xi); 
 
@@ -43,9 +44,10 @@ double ForeignPerfBasketOption::payOff(const PnlMat *matrix)
             sum2 += si_t2;
         }
 
-        double ri = foreignInterestRates.at(i).rate;
-        sum1 *= exp(-ri * t1);
-        sum2 *= exp(-ri * t2);
+        // double ri = foreignInterestRates.at(i).rate;
+        // sum1 *= exp(-ri * t1);
+        // sum2 *= exp(-ri * t2);
+
         double perf = sum2/sum1;
         if(perf >= performance)
         {
@@ -92,7 +94,10 @@ double ForeignPerfBasketOption::payOff(const PnlMat *matrix)
     }
     payOff2 /= assetCurrencyMapping.at(0);
 
-    return (payOff1 - payOff2 - strike) > 0 ? (payOff1 - payOff2 - strike) : 0;
+    double payoff = std::max(payOff1 - payOff2 - strike , 0.0);
+
+    return payoff;
+    // return (payOff1 - payOff2 - strike) > 0 ? (payOff1 - payOff2 - strike) : 0;
 }
 
 

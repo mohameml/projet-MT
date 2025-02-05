@@ -10,16 +10,22 @@ ForeignAsianOption::~ForeignAsianOption(){}
 
 // Method to calculate the payoff
 double ForeignAsianOption::payOff(const PnlMat *matrix) {
-    int N = matrix->m ;
-    PnlVect *col = pnl_vect_create(N);
-    pnl_mat_get_col(col,matrix, 1);
+    
+    int N = matrix->m - 1;
 
-    double r1 = this->foreignInterestRates[0].rate;
+    double sum = 0.0 ;
 
+    for (size_t i = 1 ; i <= N ; i++)
+    {
+        sum += MGET(matrix , i , 1);
+    }
+    sum /= N ;
+    
+    
 
-    double sum = pnl_vect_sum(col) * exp(-this->maturity * r1); 
+    double S0_T = pnl_mat_get(matrix, N ,0);
 
-    pnl_vect_free(&col);
+    double payOff = std::max(sum - S0_T , 0.0);
 
-    return sum/N -pnl_mat_get(matrix,N,0) >0 ? sum/N -pnl_mat_get(matrix,N,0) : 0;
+    return payOff;
 }
