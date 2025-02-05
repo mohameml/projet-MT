@@ -31,7 +31,7 @@ public :
      * @param[in] position : classe contient : price , price_std , deltas_vect , stddev_deltas_vect
      * @param[in] Past : matrice de taille (last_index + 1)*D ou (last_index)*D qui continet s_t0 , s_t1 , ..... , st_i , st
      */
-    void priceAndDelta(int t, const PnlMat *Past, Position* position);
+    void priceAndDelta(int t, const PnlMat *Past, double& price , double& price_std , PnlVect* deltas_vect , PnlVect*  stddev_deltas_vect);
 
 
 protected:

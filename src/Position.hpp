@@ -7,13 +7,12 @@
 class Position {
 public:
     int date;
-    PnlVect *deltas;
-    PnlVect *deltasStdDev;
+    PnlVect *deltas = nullptr;
+    PnlVect *deltasStdDev = nullptr;
     double price;
     double priceStdDev;
     double portfolioValue;
     double cash ;
-    Position();
     ~Position();
     Position(int date, double price, double priceStdDev, PnlVect* deltas, PnlVect* deltasStdDev, double portfolioValue);
     friend void to_json(nlohmann::json &j, const Position &positions);

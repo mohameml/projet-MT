@@ -3,16 +3,13 @@
 #include "json_reader.hpp"
 
 
-Portfolio::Portfolio(nlohmann::json &jsonParams, MonteCarlo &monteCarlo) : monteCarlo(monteCarlo)
+
+Portfolio::Portfolio(nlohmann::json &jsonParams)
 {
     rebalacingOrcale = createRebalancingOracleFromJson(jsonParams);
 }
 
-
-
-
-
-Portfolio::~Portfolio() 
+Portfolio::~Portfolio()
 {
     // for (auto& pos : positions)
     // {

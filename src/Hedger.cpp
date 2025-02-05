@@ -1,20 +1,25 @@
 #include "Hedger.hpp"
 
 
-Hedger::Hedger(Portfolio& hedgingPortfolio):hedgingPortfolio(hedgingPortfolio)
+
+Hedger::Hedger(nlohmann::json json)
 {
+    monteCarlo = new MonteCarlo(json);
+    hedgingPortfolio = new Portfolio(json);
 }
 
 Hedger::~Hedger()
 {
+    delete monteCarlo;
+    delete hedgingPortfolio;
 }
 
 
 void Hedger::hedge(PnlMat* dataHistorique)
 {
 
-    MonteCarlo monteCarlo = hedgingPortfolio.monteCarlo;
-    int nbDays = monteCarlo.nbDays;
+
+    int nbDays = monteCarlo->nbDays;
 
     foreignMarketToDomesticMarket(dataHistorique);
 
@@ -24,15 +29,16 @@ void Hedger::hedge(PnlMat* dataHistorique)
     PnlMat* past = pnl_mat_create(1 , 1);
     pnl_mat_set_row(past , spots  , 0);
 
-    double r = monteCarlo.model->domesticInterestRate.rate ;
+    double r = monteCarlo->model->domesticInterestRate.rate ;
     bool isFirstTime = true ;
 
 
-    // for (int t : monteCarlo.model->monitoringTimeGrid.getAllDates())
-    // {
-    //     /* code */
-    // }
-    
+
+    double price = 0.0 ;
+    double price_std = 0.0 ;
+    PnlVect *deltas = pnl_vect_create_from_zero(monteCarlo->model_size);
+    PnlVect *deltas_std_dev = pnl_vect_create_from_zero(monteCarlo->model_size);
+
 
     for (int t = 1 ; t <= 2 ; t++)
     {
@@ -44,11 +50,11 @@ void Hedger::hedge(PnlMat* dataHistorique)
         //     pnl_mat_set_row(past , spots  , past->m - 1);
         // }
 
-        if(hedgingPortfolio.rebalacingOrcale.IsRebalancing(t)) {
+        if(hedgingPortfolio->rebalacingOrcale.IsRebalancing(t)) {
             
 
 
-            if(!monteCarlo.model->monitoringTimeGrid.has(t) && monteCarlo.model->monitoringTimeGrid.has(t - 1)) { // 0 est une data de constattion  t_0 = 0 
+            if(!monteCarlo->model->monitoringTimeGrid.has(t) && monteCarlo->model->monitoringTimeGrid.has(t - 1)) { // 0 est une data de constattion  t_0 = 0 
                 pnl_mat_resize(past , past->m + 1 , past->n );
                 // pnl_mat_set_row(past , spots  , past->m - 1);
             }
@@ -56,15 +62,18 @@ void Hedger::hedge(PnlMat* dataHistorique)
             pnl_mat_get_row(spots , dataHistorique , t);
             pnl_mat_set_row(past , spots  , past->m - 1);
 
-            Position position ;  
-            // double t_ = (double)t / (double)nbDays;
-            monteCarlo.priceAndDelta(t , past , &position);
             
             
-            position.UpdatePortfolioValue(t , r ,spots , isFirstTime);
+            monteCarlo->priceAndDelta(t , past , price , price_std  , deltas , deltas_std_dev);
 
 
-            hedgingPortfolio.positions.push_back(position);
+            Position* position = new Position(t , price , price_std , deltas , deltas_std_dev , 0.0); 
+
+
+            position->UpdatePortfolioValue(t , r ,spots , isFirstTime);
+
+
+            hedgingPortfolio->positions.push_back(position);
             isFirstTime = false ;
 
 
@@ -74,15 +83,17 @@ void Hedger::hedge(PnlMat* dataHistorique)
 
 
     pnl_vect_free(&spots);
+    pnl_vect_free(&deltas);
+    pnl_vect_free(&deltas_std_dev);
     
 }
 
 
 void Hedger::foreignMarketToDomesticMarket(PnlMat *Past)
 {
-    auto assetCurrencyMapping = hedgingPortfolio.monteCarlo.option->assetCurrencyMapping;
+    auto assetCurrencyMapping = monteCarlo->option->assetCurrencyMapping;
     int n0 = assetCurrencyMapping.at(0);
-    int nbAsset = hedgingPortfolio.monteCarlo.model->assets.size();
+    int nbAsset = monteCarlo->model->assets.size();
 
     for (size_t t = 0; t < Past->m ; t++)
     {

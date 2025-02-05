@@ -3,14 +3,18 @@
 
 
 #include "Portfolio.hpp"
+#include "MonteCarlo.hpp"
+
 
 class Hedger {
 
 public :
 
-    Portfolio& hedgingPortfolio;
+    Portfolio* hedgingPortfolio;
+    MonteCarlo* monteCarlo;
 
-    Hedger(Portfolio& hedgingPortfolio);
+
+    Hedger(nlohmann::json json);
     ~Hedger();
 
     void hedge(PnlMat* dataHistorique);

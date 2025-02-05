@@ -10,12 +10,12 @@
 
 class Portfolio {
 public:
-    MonteCarlo &monteCarlo;
-    std::list<Position> positions;
+    std::list<Position*> positions;
+    Position* pos ; 
     double cash ;
     RebalancingOracle rebalacingOrcale;
 
-    Portfolio(nlohmann::json &jsonParams, MonteCarlo &monteCarlo);
+    Portfolio(nlohmann::json &jsonParams);
     ~Portfolio();
 
 

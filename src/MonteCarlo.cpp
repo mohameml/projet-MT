@@ -28,7 +28,7 @@ MonteCarlo::~MonteCarlo()
     pnl_rng_free(&rng);
 }
 
-void MonteCarlo::priceAndDelta(int t, const PnlMat *Past, Position* position)
+void MonteCarlo::priceAndDelta(int t, const PnlMat *Past, double& price , double& price_std , PnlVect* deltas_vect , PnlVect*  stddev_deltas_vect)
 {
     int D = model_size;
     int M = sample_number;
@@ -37,13 +37,8 @@ void MonteCarlo::priceAndDelta(int t, const PnlMat *Past, Position* position)
     // double T = option->maturity;
 
 
-    double price = 0.0 ;
-    double price_std = 0.0;
-    PnlVect* deltas_vect = pnl_vect_create_from_double(D , 0.0);
-    PnlVect* stddev_deltas_vect = pnl_vect_create_from_double(D , 0.0);
-
-
-
+    price = 0.0;
+    price_std = 0.0;
 
     PnlMat *path = pnl_mat_create(N, D);
     for (int i = 0; i < M; i++)
@@ -84,16 +79,9 @@ void MonteCarlo::priceAndDelta(int t, const PnlMat *Past, Position* position)
     std::cout << "price std =" << price_std << std::endl ;
 
 
-    position->price = price;
-    position->priceStdDev = price_std;
-    pnl_vect_clone(position->deltas , deltas_vect);
-    pnl_vect_clone(position->deltasStdDev , stddev_deltas_vect);
 
 
     pnl_mat_free(&path);
-    pnl_vect_free(&deltas_vect);
-    pnl_vect_free(&stddev_deltas_vect);
-
 }
 
 void MonteCarlo::end_of_calcul_price(double &price, double &price_stdev, double t) const
