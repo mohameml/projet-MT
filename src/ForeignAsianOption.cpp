@@ -15,15 +15,15 @@ double ForeignAsianOption::payOff(const PnlMat *matrix) {
 
     double sum = 0.0 ;
 
-    for (size_t i = 1 ; i <= N ; i++)
+    for (size_t j = 1 ; j <= N ; j++)
     {
-        sum += MGET(matrix , i , 1);
+        sum += MGET(matrix , j , 1);
     }
-    sum /= N ;
+    sum /= (double)N ;
     
     
 
-    double S0_T = pnl_mat_get(matrix, N ,0);
+    double S0_T = MGET(matrix, N ,0);
 
     double payOff = std::max(sum - S0_T , 0.0);
 

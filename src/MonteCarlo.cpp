@@ -35,24 +35,15 @@ void MonteCarlo::priceAndDelta(int t, const PnlMat *Past, double& price , double
     int M = sample_number;
     int N = model->monitoringTimeGrid.len();
     double h = fd_step;
-    // double T = option->maturity;
-
-
-    price = 0.0;
-    price_std = 0.0;
+    
 
     PnlMat *path = pnl_mat_create(N, D);
+
     for (int i = 0; i < M; i++)
     {
+
         model->asset(Past, t , path, this->rng);
         
-        if(i == M - 1) {
-
-            std::cout << "=======" << std::endl;
-            pnl_mat_print(path);
-
-        }
-
         double phi_j = this->option->payOff(path);
         price += phi_j;
         price_std += phi_j * phi_j;
@@ -76,7 +67,7 @@ void MonteCarlo::priceAndDelta(int t, const PnlMat *Past, double& price , double
     end_of_calcul_delta(deltas_vect, stddev_deltas_vect, t_, &St);
 
 
-    std::cout << "========== t " << t  << "================" << std::endl ;
+    std::cout << "========== t  = " << t  << " ==================" << std::endl ;
     std::cout << "price =" << price << std::endl ;
     std::cout << "price std =" << price_std << std::endl ;
 

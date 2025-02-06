@@ -93,7 +93,9 @@ GlobalModel::GlobalModel(const nlohmann::json json)
             pnl_vect_mult_scalar(volatilityVector , realVolatility);
             pnl_vect_plus_vect(volatilityVector , currencyOfAsset->volatilityVector);
 
-            assets.push_back(std::make_unique<RiskyAsset>(domesticInterestRate , realVolatility + currencyOfAsset->realVolatility , volatilityVector , index_asset));
+            double real_vol = pnl_vect_norm_two(volatilityVector);
+
+            assets.push_back(std::make_unique<RiskyAsset>(domesticInterestRate , real_vol, volatilityVector , index_asset));
         }
 
 
@@ -121,6 +123,8 @@ Currency* GlobalModel::getCurrencyById(std::string id) {
             return curr.get();
         }
     }
+
+    return nullptr;
     
 }
 

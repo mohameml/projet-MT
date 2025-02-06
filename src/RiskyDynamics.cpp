@@ -47,7 +47,6 @@ void RiskyDynamics::sampleNextDate(PnlMat *path, double step, const PnlVect *G, 
 
         double s_t_d = MGET(path, index_time - 1, index);
         MLET(path , index_time , index) = s_t_d*value ;
-
     
     } else {
 
