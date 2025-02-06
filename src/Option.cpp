@@ -17,7 +17,7 @@ Option::Option()
 Option::Option(const nlohmann::json json)
 {
 
-    int numberOfDaysPerYear = json.at("NumberOfDaysInOneYear").get<int>();
+    numberOfDaysPerYear = json.at("NumberOfDaysInOneYear").get<int>();
 
     maturity = json.at("Option").at("MaturityInDays").get<int>() / double (numberOfDaysPerYear);
 

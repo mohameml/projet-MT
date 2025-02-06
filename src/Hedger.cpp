@@ -28,25 +28,12 @@ void Hedger::hedge(PnlMat* dataHistorique)
     PnlMat* past = pnl_mat_create(1 , dataHistorique->n);
     pnl_mat_set_row(past , spots  , 0);
 
-    // std::cout << "Past " << std::endl ;
-    // pnl_mat_print(dataHistorique);
 
 
     double price = 0.0 ;
     double price_std = 0.0 ;
     PnlVect *deltas = pnl_vect_create_from_zero(monteCarlo->model_size);
     PnlVect *deltas_std_dev = pnl_vect_create_from_zero(monteCarlo->model_size);
-
-    // print(monteCarlo->model->monitoringTimeGrid.grid_time);
-    int i_ = 0 ;
-    for (auto grid : monteCarlo->model->monitoringTimeGrid.grid_time)
-    {
-
-        std::cout << "t_" << i_ << " = "  << grid << std::endl ;
-        i_++;
-    }
-    
-
 
     double r = monteCarlo->model->domesticInterestRate.rate ;
 
@@ -56,7 +43,6 @@ void Hedger::hedge(PnlMat* dataHistorique)
         if(hedgingPortfolio->rebalacingOrcale.IsRebalancing(t)) {
             
 
-            // 0 est une data de constation  t_0 = 0 
             if(!monteCarlo->model->monitoringTimeGrid.has(t) && monteCarlo->model->monitoringTimeGrid.has(t - 1)) { 
                 PnlMat* mat_clone = pnl_mat_create(past->m , past->n);
                 pnl_mat_clone(mat_clone , past);
@@ -68,10 +54,10 @@ void Hedger::hedge(PnlMat* dataHistorique)
             pnl_mat_get_row(spots , dataHistorique , t);
             pnl_mat_set_row(past , spots  , past->m - 1);
 
-            if(!monteCarlo->model->monitoringTimeGrid.has(t) && monteCarlo->model->monitoringTimeGrid.has(t - 1)) {
+            // if(!monteCarlo->model->monitoringTimeGrid.has(t) && monteCarlo->model->monitoringTimeGrid.has(t - 1)) {
 
-                pnl_mat_print(past);
-            }
+            //     pnl_mat_print(past);
+            // }
 
             monteCarlo->priceAndDelta(t , past , price , price_std  , deltas , deltas_std_dev);
 

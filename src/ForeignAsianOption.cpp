@@ -11,11 +11,11 @@ ForeignAsianOption::~ForeignAsianOption(){}
 // Method to calculate the payoff
 double ForeignAsianOption::payOff(const PnlMat *matrix) {
     
-    int N = matrix->m - 1;
+    int N = matrix->m;
 
     double sum = 0.0 ;
 
-    for (size_t j = 1 ; j <= N ; j++)
+    for (size_t j = 0 ; j < N ; j++)
     {
         sum += MGET(matrix , j , 1);
     }
@@ -23,7 +23,7 @@ double ForeignAsianOption::payOff(const PnlMat *matrix) {
     
     
 
-    double S0_T = MGET(matrix, N ,0);
+    double S0_T = MGET(matrix, N - 1 ,0);
 
     double payOff = std::max(sum - S0_T , 0.0);
 

@@ -4,6 +4,11 @@
 ForeignPerfBasketOption::ForeignPerfBasketOption(const nlohmann::json json) : Option(json) {
     // this->strike = 0;
     strike = json.at("Option").at("Strike").get<double>();
+    nbAsset = 0;
+    for(int j = 0; j < assetCurrencyMapping.size(); j++)
+    {
+        nbAsset += assetCurrencyMapping.at(j);
+    }
 }
 
 ForeignPerfBasketOption::~ForeignPerfBasketOption()
@@ -14,22 +19,15 @@ ForeignPerfBasketOption::~ForeignPerfBasketOption()
 
 double ForeignPerfBasketOption::payOff(const PnlMat *matrix)
 {
-    int nbAsset = 0;
-    for(int j = 0; j < assetCurrencyMapping.size(); j++)
-    {
-        nbAsset += assetCurrencyMapping.at(j);
-    }
-
-
 
     int n0 = assetCurrencyMapping.at(0);
+
+    int t1 = matrix->m-3; // 0
+    int t2 = matrix->m-2; // 1
+    int t3 = matrix->m-1; // 2
+
     int imax = 0;
-
-    int t1 = matrix->m-3;
-    int t2 = matrix->m-2;
-    int t3 = matrix->m-1;
-
-    double performance = 0;
+    double performance = 0.;
 
     for (size_t i = 1 ; i < assetCurrencyMapping.size(); i++)
     {
@@ -37,11 +35,11 @@ double ForeignPerfBasketOption::payOff(const PnlMat *matrix)
         int ni = assetCurrencyMapping.at(i);
         double ri = foreignInterestRates.at(i - 1).rate ;
         int index_xi = nbAsset + i - 1;
-        double X_i_t1 = MGET(matrix , t1 , index_xi)*exp(-ri * t1);
-        double X_i_t2 = MGET(matrix , t2 , index_xi)*exp(-ri * t2);
+        double X_i_t1 = MGET(matrix , t1 , index_xi)*exp(-ri * ((double) t1 / (double) numberOfDaysPerYear ) );
+        double X_i_t2 = MGET(matrix , t2 , index_xi)*exp(-ri * ((double) t2 / (double) numberOfDaysPerYear ));
 
-        double sum2 = 0;
-        double sum1 = 0; 
+        double sum2 = 0.;
+        double sum1 = 0.; 
 
         for (size_t j = n0 ; j < n0 + ni ; j++)
         {

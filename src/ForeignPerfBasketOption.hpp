@@ -8,6 +8,7 @@ class ForeignPerfBasketOption : public Option
 
 public:
     double strike;
+    int nbAsset;
     ForeignPerfBasketOption();
     ForeignPerfBasketOption(const nlohmann::json json);
     ~ForeignPerfBasketOption();

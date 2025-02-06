@@ -66,14 +66,6 @@ void MonteCarlo::priceAndDelta(int t, const PnlMat *Past, double& price , double
     PnlVect St = pnl_vect_wrap_mat_row(Past, Past->m - 1);
     end_of_calcul_delta(deltas_vect, stddev_deltas_vect, t_, &St);
 
-
-    std::cout << "========== t  = " << t  << " ==================" << std::endl ;
-    std::cout << "price =" << price << std::endl ;
-    std::cout << "price std =" << price_std << std::endl ;
-
-
-
-
     pnl_mat_free(&path);
 }
 
@@ -84,7 +76,7 @@ void MonteCarlo::end_of_calcul_price(double &price, double &price_stdev, double 
     double M = sample_number;
     price = std::exp(-r * (T - t)) * price / M;
     price_stdev = price_stdev * std::exp(-2.0 * r * (T - t)) / M - price * price;
-    price_stdev = std::sqrt(price_stdev / M);
+    price_stdev = std::sqrt(std::abs(price_stdev / M));
 }
 
 void MonteCarlo::end_of_calcul_delta(PnlVect *delta, PnlVect *delta_stdev, double t, PnlVect *St) const
@@ -106,7 +98,12 @@ void MonteCarlo::end_of_calcul_delta(PnlVect *delta, PnlVect *delta_stdev, doubl
     pnl_vect_mult_vect_term(delta_copy, delta);
     pnl_vect_minus_vect(delta_stdev, delta_copy);
     pnl_vect_div_double(delta_stdev, M);
-    pnl_vect_map_inplace(delta_stdev, std::sqrt);
+    // pnl_vect_map_inplace(delta_stdev, std::sqrt);
+    for (size_t i = 0; i < delta_stdev->size; i++)
+    {
+        LET(delta_stdev , i) = std::sqrt(std::abs(GET(delta_stdev , i)));
+    }
+    
 
     pnl_vect_free(&delta_copy);
 }

@@ -138,7 +138,7 @@ void GlobalModel::asset(const PnlMat *past, int t, PnlMat *path, PnlRng *rng)
     
     int last_index = monitoringTimeGrid.getLastIndex(t);
 
-    if (last_index == - 1)
+    if (last_index ==  monitoringTimeGrid.len() - 1)
     {
         pnl_mat_extract_subblock(path, past, 0, path->m, 0, path->n);
         return;
@@ -187,8 +187,16 @@ void GlobalModel::asset(const PnlMat *past, int t, PnlMat *path, PnlRng *rng)
 void GlobalModel::shift_asset(int d, int t, double h, PnlMat *path)
 {
 
-    int last_index = monitoringTimeGrid.getLastIndex(t);
-    for (int i = last_index + 1; i < path->m; i++)
+    int last_index;
+    
+    if(monitoringTimeGrid.has(t)) {
+        last_index = monitoringTimeGrid.getLastIndex(t);
+    } else {
+        last_index = monitoringTimeGrid.getLastIndex(t) + 1 ;
+    }
+
+    
+    for (int i = last_index ; i < path->m; i++)
     {
         MLET(path, i, d) *= h;
     };

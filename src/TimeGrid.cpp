@@ -59,7 +59,7 @@ int TimeGrid::getLastIndex(int t)
         }
     }
     
-    return -1;
+    return grid_time.size() - 1;
 }
 
 std::vector<int> TimeGrid::getAllDates()
