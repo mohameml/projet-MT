@@ -14,7 +14,7 @@ TASKS=(
 
 # Exécution des tâches
 for task in "${TASKS[@]}"; do
-    echo "=============================== Lancement : $EXECUTABLE $task ================================="
+    echo "==== Lancement : $EXECUTABLE $task ====="
     $EXECUTABLE $task
 
     # Vérification du succès
